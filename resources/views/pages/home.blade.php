@@ -9,6 +9,13 @@
     <link href="{{ asset('css/index.css') }}" rel="stylesheet"/>
 
     <style>
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
         :root {
             --primary-color: #F5F1EB;
             --secondary-color: #D6C7B2;
@@ -20,7 +27,6 @@
 
         body {
             background-color: #FFFFFF;
-            overflow-x: hidden;
         }
 
         nav {
@@ -858,41 +864,45 @@
                 padding: 4rem 1rem 6rem !important;
             }
 
-            .highlight-hero {
-                grid-template-columns: 1fr !important;
-                gap: 1.5rem;
-            }
-
-            .highlight-slider {
-                min-height: 380px !important;
-                max-height: 440px;
-            }
-
             .highlight-slider::before,
             .highlight-aside::before {
                 display: none !important;
             }
 
+            .highlight-slider {
+                min-height: auto !important;
+                height: 320px !important;
+                max-width: 100% !important;
+            }
+
             .highlight-slide-frame {
-                max-width: 90%;
+                max-width: 100% !important;
+                padding: 0.5rem !important;
                 aspect-ratio: 1 / 1;
-                padding: 1rem;
+            }
+            
+            .highlight-hero {
+                grid-template-columns: 1fr !important;
+                width: 100% !important;
+                gap: 1.5rem;
+                overflow: hidden;
             }
 
             nav {
-                padding: 1rem !important;
+                padding: 1rem 1.5rem !important;
                 flex-direction: column;
                 gap: 0.5rem;
                 text-align: center;
             }
             .nav-links {
+                display: flex;
                 flex-wrap: wrap;
                 justify-content: center;
-                gap: 0.8rem 1.2rem;
-                font-size: 0.9rem;
+                gap: 0.8rem;
+                font-size: 0.85rem;
             }
             .btn-nav {
-                padding: 0.4rem 1rem !important;
+                padding: 0.4rem 0.8rem !important;
             }
 
             .avail-grid-container {
