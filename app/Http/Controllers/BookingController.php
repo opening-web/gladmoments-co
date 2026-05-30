@@ -29,8 +29,7 @@ class BookingController extends Controller
 
         $formConfig = config('booking-forms');
 
-        // Fetch dynamic packages from database
-        $photoboothService = Service::where('slug', 'gladmoments')->first();
+        $photoboothService = Service::where('slug', 'glad-moments')->first();
         if ($photoboothService && $photoboothService->packages->count() > 0) {
             $formConfig['photobooth_packages'] = $photoboothService->packages->mapWithKeys(function ($package) {
                 return [$package->name => $package->discounted_price ?? $package->price];
@@ -67,7 +66,7 @@ class BookingController extends Controller
             })->toArray();
         } else {
             $formConfig['audio_package_meta'] = $this->buildFallbackPackageMeta($formConfig['audio_packages']);
-            $formConfig['audio_package_details'] = config('booking-forms.audio_package_details');
+            $formConfig['audio_package_details'] = config('booking-forms.audio_packages_details');
         }
 
         $bundleService = Service::where('slug', 'bundle')->first();
@@ -119,7 +118,7 @@ class BookingController extends Controller
         $this->ensureScheduleDateIsAvailable($validated['event_date']);
 
         $booking = Booking::create([
-            'package_id' => $this->resolvePackageId($type),
+            'package_id' => $this->resolvePackageId($type, $packageChoice),
             'package_choice' => $packageChoice,
             'booking_type' => $type,
             'customer_name' => $validated['customer_name'] ?? $validated['recipient_name'] ?? '—',
@@ -187,7 +186,7 @@ class BookingController extends Controller
 
     private function validatePhotobooth(Request $request): array
     {
-        $photoboothService = Service::where('slug', 'gladmoments')->first();
+        $photoboothService = Service::where('slug', 'glad-moments')->first();
         if ($photoboothService && $photoboothService->packages->count() > 0) {
             $packages = $photoboothService->packages->pluck('name')->toArray();
         } else {
@@ -346,10 +345,10 @@ class BookingController extends Controller
         }
 
         $slug = match ($type) {
-            'photobooth' => 'gladmoments',
+            'photobooth' => 'glad-moments',
             'audio' => 'gladtocall',
             'bundle' => 'bundle',
-            default => 'gladmoments',
+            default => 'glad-moments',
         };
 
         return Package::whereHas('service', fn ($q) => $q->whereIn('slug', Service::slugAliases($slug)))->value('id')
@@ -378,7 +377,6 @@ class BookingController extends Controller
             return $package->discounted_price ?? $package->price;
         }
 
-        // Fallback
         return match ($type) {
             'photobooth' => config("booking-forms.photobooth_packages.{$packageChoice}", 1500000),
             'audio' => config("booking-forms.audio_packages.{$packageChoice}", 2500000),

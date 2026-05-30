@@ -22,7 +22,6 @@
                         <th>Nama</th>
                         <th>Event</th>
                         <th>Pesan</th>
-                        <th>Rating</th>
                         <th>Aktif</th>
                         <th>Aksi</th>
                     </tr>
@@ -33,7 +32,6 @@
                         <td>{{ $item->name }}</td>
                         <td>{{ $item->event }}</td>
                         <td style="white-space: normal; max-width: 320px;">{{ Str::limit($item->message, 80) }}</td>
-                        <td>{{ $item->rating }}/5</td>
                         <td>
                             <span class="badge {{ $item->is_active ? 'bg-success' : 'bg-secondary' }}">
                                 {{ $item->is_active ? 'Aktif' : 'Nonaktif' }}
@@ -48,7 +46,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6" class="text-center text-muted">Belum ada data.</td></tr>
+                    <tr><td colspan="5" class="text-center text-muted">Belum ada data.</td></tr>
                 @endforelse
             </tbody>
         </table>

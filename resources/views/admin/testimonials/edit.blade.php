@@ -27,11 +27,7 @@
         </div>
         <div class="mb-3">
             <label class="form-label">Pesan Testimoni</label>
-            <textarea name="message" class="form-control" rows="3" required>{{ $testimonial->message }}</textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Rating (1-5)</label>
-            <input type="number" name="rating" class="form-control" min="1" max="5" value="{{ $testimonial->rating }}">
+            <textarea name="message" class="form-control" rows="3" required>{{ old('message', $testimonial->message) }}</textarea>
         </div>
         <div class="form-check mb-3">
             <input type="hidden" name="is_active" value="0">

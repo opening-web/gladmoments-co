@@ -18,6 +18,10 @@
             </div>
         @endif
         <div class="mb-3">
+            <label class="form-label">Judul Promo</label>
+            <input type="text" name="title" class="form-control" value="{{ old('title', $promo->title) }}" placeholder="Judul promo" required>
+        </div>
+        <div class="mb-3">
             <label class="form-label">URL Promo</label>
             <input type="text" name="cta_url" class="form-control" value="{{ old('cta_url', $promo->cta_url) }}" placeholder="Contoh: /booking atau https://shopee.co.id/..." required>
         </div>
