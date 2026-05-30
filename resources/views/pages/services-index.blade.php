@@ -12,12 +12,21 @@
         --si-card-bg: #FFFFFF;
     }
 
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
+    }
+
     .si-body {
         background-color: var(--si-bg);
         color: #2D2D2D;
         font-family: 'Poppins', sans-serif;
         position: relative;
         overflow: hidden;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .si-bg-pattern {
@@ -34,14 +43,18 @@
     .si-container {
         max-width: 1200px;
         margin: 0 auto;
-        padding: 8rem 2rem 6rem;
+        padding: 8rem 1.5rem 6rem;
         position: relative;
         z-index: 1;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .si-hero-header {
         text-align: center;
         margin-bottom: 5rem;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .si-tag {
@@ -81,6 +94,8 @@
         gap: 5rem;
         align-items: center;
         margin-bottom: 8rem;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .si-services-split.reverse {
@@ -94,6 +109,11 @@
     .si-services-split.reverse .si-hero-image-wrap {
         grid-column: 1;
         grid-row: 1;
+    }
+
+    .si-service-info-block {
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .si-service-info-block .si-service-title {
@@ -116,6 +136,8 @@
         list-style: none;
         padding: 0;
         margin: 0 0 2.5rem 0;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .si-feature-list li {
@@ -136,6 +158,8 @@
         display: flex;
         align-items: center;
         gap: 1.25rem;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .si-btn-rose {
@@ -148,6 +172,7 @@
         text-decoration: none;
         transition: all 0.3s ease;
         box-shadow: 0 4px 14px rgba(251, 45, 90, 0.2);
+        display: inline-block;
     }
 
     .si-btn-rose:hover {
@@ -181,6 +206,8 @@
 
     .si-hero-image-wrap {
         position: relative;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .si-image-backdrop {
@@ -218,6 +245,8 @@
         margin: 6rem auto 2rem;
         border-top: 1px solid rgba(176, 141, 87, 0.15);
         padding-top: 5rem;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .si-faq-header {
@@ -236,6 +265,8 @@
         display: flex;
         flex-direction: column;
         gap: 1rem;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .si-faq-item {
@@ -245,6 +276,8 @@
         box-shadow: 0 4px 12px rgba(26, 18, 6, 0.01);
         overflow: hidden;
         transition: all 0.3s ease;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .si-faq-trigger {
@@ -258,6 +291,7 @@
         align-items: center;
         cursor: pointer;
         outline: none;
+        box-sizing: border-box;
     }
 
     .si-faq-trigger span {
@@ -265,6 +299,7 @@
         font-weight: 600;
         color: var(--si-dark);
         transition: color 0.3s;
+        padding-right: 1rem;
     }
 
     .si-faq-icon-box {
@@ -289,6 +324,8 @@
         max-height: 0;
         overflow: hidden;
         transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .si-faq-inner {
@@ -320,12 +357,14 @@
     .si-cta-section-card {
         background: var(--si-dark);
         border-radius: 24px;
-        padding: 4rem 3rem;
+        padding: 4rem 2rem;
         text-align: center;
         position: relative;
         overflow: hidden;
         margin-top: 6rem;
         box-shadow: 0 20px 40px rgba(26, 18, 6, 0.12);
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .si-cta-pattern {
@@ -368,12 +407,76 @@
         box-shadow: 0 4px 15px rgba(176, 141, 87, 0.3);
         position: relative;
         z-index: 1;
+        box-sizing: border-box;
     }
 
     .si-btn-gold-cta:hover {
         background: var(--si-gold-hover);
         transform: translateY(-2px);
         box-shadow: 0 6px 22px rgba(176, 141, 87, 0.4);
+    }
+
+    @media (max-width: 992px) {
+        .si-container {
+            padding-top: 7rem;
+        }
+        .si-services-split {
+            grid-template-columns: 1fr;
+            gap: 3rem;
+            margin-bottom: 6rem;
+        }
+        .si-services-split.reverse {
+            grid-template-columns: 1fr;
+        }
+        .si-services-split.reverse .si-service-info-block {
+            grid-column: 1;
+        }
+        .si-services-split.reverse .si-hero-image-wrap {
+            grid-column: 1;
+            grid-row: auto;
+        }
+        .si-showcase-img {
+            height: 380px;
+        }
+        .si-image-backdrop-filled {
+            bottom: -15px;
+            right: -15px;
+        }
+        .si-services-split.reverse .si-image-backdrop-filled {
+            left: -15px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .si-hero-header h1 {
+            font-size: 2.2rem;
+        }
+        .si-service-info-block .si-service-title {
+            font-size: 1.8rem;
+        }
+        .si-actions-group {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+        .si-btn-rose {
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .si-faq-trigger {
+            padding: 1.25rem 1.25rem;
+        }
+        .si-faq-inner {
+            padding: 0 1.25rem 1.25rem 1.25rem;
+        }
+        .si-cta-section-card h2 {
+            font-size: 1.8rem;
+        }
+        .si-btn-gold-cta {
+            width: 100%;
+            justify-content: center;
+        }
     }
 </style>
 @endsection
