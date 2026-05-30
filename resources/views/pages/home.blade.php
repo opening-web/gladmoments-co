@@ -9,7 +9,6 @@
     <link href="{{ asset('css/index.css') }}" rel="stylesheet"/>
 
     <style>
-        /* Premium Custom Overrides for Home Page */
         :root {
             --primary-color: #F5F1EB;
             --secondary-color: #D6C7B2;
@@ -24,7 +23,6 @@
             overflow-x: hidden;
         }
 
-        /* Navbar transitions */
         nav {
             padding: 1.2rem 4rem;
             transition: all 0.4s ease;
@@ -41,7 +39,6 @@
             color: var(--text-color) !important;
         }
 
-        /* Hero design tweaks */
         .hero {
             background: linear-gradient(135deg, #120b03 0%, #241808 50%, #120b03 100%) !important;
         }
@@ -52,7 +49,6 @@
             background: rgba(176, 141, 87, 0.05);
         }
 
-        /* Styled Premium Glassmorphic Service Cards */
         .services {
             position: relative;
             background: linear-gradient(180deg, #FFFFFF 0%, #FAF8F5 100%);
@@ -165,7 +161,6 @@
             transform: translateX(5px);
         }
 
-        /* Portfolio cards */
         .portfolio-item {
             border-radius: 16px !important;
             overflow: hidden;
@@ -215,512 +210,505 @@
             }
         }
 
-      /* ===== HIGHLIGHT SECTION - MODERN CARD LAYOUT ===== */
-.highlight {
-    position: relative;
-    background: linear-gradient(180deg, #FFFFFF 0%, #FAF8F5 100%);
-    padding: 6rem 2rem 10rem !important;
-}
-
-.highlight-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.highlight-header {
-    text-align: center;
-    margin-bottom: 3rem;
-}
-.highlight-header .section-sub {
-    max-width: 760px;
-    margin: 0.6rem auto 0;
-    color: #6b6b6b;
-    line-height: 1.8;
-    font-size: 1rem;
-}
-
-.highlight-grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 2.5rem;
-    margin-bottom: 4rem;
-}
-
-/* Highlight Card */
-.highlight-card {
-    position: relative;
-    border-radius: 24px;
-    overflow: hidden;
-    height: 380px;
-    background: #FFFFFF;
-    border: 1px solid rgba(176, 141, 87, 0.1);
-    box-shadow: 0 10px 35px rgba(176, 141, 87, 0.05);
-    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s;
-    cursor: pointer;
-    opacity: 0;
-    transform: translateY(12px);
-    animation: highlightFade 560ms cubic-bezier(0.22, 0.9, 0.35, 1) forwards;
-}
-
-.highlight-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 25px 50px rgba(176, 141, 87, 0.15);
-    border-color: rgba(176, 141, 87, 0.25);
-}
-
-.highlight-card-image {
-    position: absolute;
-    inset: 0;
-    background-size: cover;
-    background-position: center;
-    transition: transform 0.6s ease, opacity 0.6s ease;
-    z-index: 1;
-}
-
-.highlight-card:hover .highlight-card-image {
-    transform: scale(1.08);
-}
-
-/* Fade-in animation for cards */
-@keyframes highlightFade {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.highlight-card-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        180deg,
-        rgba(26, 18, 6, 0) 0%,
-        rgba(26, 18, 6, 0.3) 50%,
-        rgba(26, 18, 6, 0.95) 100%
-    );
-    z-index: 2;
-    transition: background 0.4s ease;
-}
-
-.highlight-card:hover .highlight-card-overlay {
-    background: linear-gradient(
-        180deg,
-        rgba(26, 18, 6, 0.1) 0%,
-        rgba(26, 18, 6, 0.4) 50%,
-        rgba(26, 18, 6, 0.98) 100%
-    );
-}
-
-.highlight-card-content {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 2rem;
-    z-index: 3;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    height: 100%;
-    transform: translateY(20px);
-    transition: transform 0.4s ease;
-}
-
-.highlight-card:hover .highlight-card-content {
-    transform: translateY(0);
-}
-
-.highlight-card-cat {
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: #D6C7B2;
-    margin-bottom: 0.5rem;
-    display: block;
-    font-weight: 700;
-    opacity: 0.9;
-}
-
-.highlight-card-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem;
-    font-weight: 600;
-    color: #FFFFFF;
-    margin: 0 0 0.5rem 0;
-    line-height: 1.3;
-    transition: color 0.3s ease;
-}
-
-.highlight-card:hover .highlight-card-title {
-    color: #FFF9F0;
-}
-
-.highlight-card-desc {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.85);
-    line-height: 1.5;
-    margin: 0;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
-.highlight-card:hover .highlight-card-desc {
-    opacity: 1;
-}
-
-/* Highlight slider card layout for laptop screens */
-.highlight-hero {
-    display: grid;
-    grid-template-columns: minmax(320px, 1fr) minmax(320px, 380px);
-    align-items: center;
-    gap: 2rem;
-    padding: 1.5rem 0;
-}
-
-.highlight-slider {
-    position: relative;
-    width: 100%;
-    max-width: 520px;
-    min-height: 520px;
-    border-radius: 36px;
-    overflow: hidden;
-    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.12), transparent 24%), linear-gradient(180deg, rgba(14, 10, 4, 0.08), rgba(11, 7, 4, 0.62));
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    box-shadow: 0 35px 90px rgba(0, 0, 0, 0.18);
-}
-
-.highlight-slider::before {
-    content: 'Glad Moments & Co';
-    position: absolute;
-    top: 48%;
-    left: 12%;
-    transform: translate(-10%, -50%);
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(4.5rem, 6vw, 7rem);
-    color: rgba(255, 255, 255, 0.08);
-    letter-spacing: 0.38em;
-    text-transform: uppercase;
-    pointer-events: none;
-    z-index: 0;
-}
-
-.highlight-slide {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.9s ease, visibility 0.9s ease;
-}
-
-.highlight-slide.active {
-    opacity: 1;
-    visibility: visible;
-}
-
-.highlight-slide::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(12, 9, 5, 0.12), rgba(7, 4, 2, 0.7));
-    z-index: 1;
-}
-
-.highlight-slide-inner {
-    position: relative;
-    z-index: 2;
-    height: 100%;
-    display: grid;
-    place-items: center;
-    padding: 2rem 1.5rem;
-}
-
-.highlight-slide-frame {
-    width: 100%;
-    max-width: 430px;
-    aspect-ratio: 1 / 1;
-    padding: 1.5rem;
-    border-radius: 34px;
-    background: rgba(255, 255, 255, 0.98);
-    border: 1px solid rgba(176, 141, 87, 0.16);
-    box-shadow: 0 35px 70px rgba(0, 0, 0, 0.12);
-    display: grid;
-    place-items: center;
-}
-
-.highlight-slide-photo {
-    width: 100%;
-    height: 100%;
-    border-radius: 28px;
-    background-size: cover;
-    background-position: center;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.14);
-}
-
-.highlight-slide-photo-caption {
-    margin: 1rem 0 0;
-    color: #5B5B5B;
-    font-size: 0.95rem;
-    line-height: 1.75;
-    text-align: center;
-    max-width: 420px;
-}
-
-.highlight-aside {
-    position: relative;
-    display: grid;
-    gap: 1rem;
-    padding: 2rem 1.75rem;
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid rgba(176, 141, 87, 0.12);
-    border-radius: 32px;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
-    backdrop-filter: blur(20px);
-}
-
-.highlight-aside::before {
-    content: 'Glad';
-    position: absolute;
-    top: 12px;
-    right: 14px;
-    font-family: 'Playfair Display', serif;
-    font-size: 4.5rem;
-    color: rgba(176, 141, 87, 0.08);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    z-index: 0;
-}
-
-.highlight-aside-tag {
-    font-size: 0.75rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: #B08D57;
-    font-weight: 700;
-    z-index: 1;
-}
-
-.highlight-aside-brand {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.7rem, 4vw, 4.4rem);
-    line-height: 0.95;
-    color: #1A1206;
-    letter-spacing: 0.04em;
-    margin: 0;
-    z-index: 1;
-}
-
-.highlight-aside-title {
-    font-size: 1.05rem;
-    color: #4F4F4F;
-    line-height: 1.75;
-    margin: 0;
-    z-index: 1;
-}
-
-.highlight-aside-text {
-    margin: 0;
-    color: #5B5B5B;
-    font-size: 0.98rem;
-    line-height: 1.8;
-    z-index: 1;
-}
-
-.highlight-aside-features {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 0.75rem;
-    z-index: 1;
-}
-
-.highlight-aside-features li {
-    position: relative;
-    padding-left: 1.7rem;
-    color: #5B5B5B;
-    font-size: 0.95rem;
-    line-height: 1.75;
-}
-
-.highlight-aside-features li::before {
-    content: '—';
-    position: absolute;
-    left: 0;
-    top: 0;
-    color: #B08D57;
-    font-size: 1rem;
-}
-
-.highlight-pager {
-    margin-top: 1.5rem;
-}
-
-@media(max-width: 1024px) {
-    .highlight-hero {
-        grid-template-columns: 1fr;
-    }
-
-    .highlight-slider {
-        max-width: 100%;
-        min-height: 480px;
-    }
-}
-
-@media(max-width: 768px) {
-    .highlight-slider {
-        min-height: 420px;
-    }
-
-    .highlight-slide-inner {
-        padding: 1rem;
-    }
-
-    .highlight-slide-frame {
-        max-width: 100%;
-        padding: 1rem;
-    }
-
-    .highlight-aside {
-        padding: 1.5rem 1rem;
-    }
-
-    .highlight-aside-brand {
-        font-size: 2.5rem;
-    }
-
-    .highlight-aside::before {
-        font-size: 3rem;
-        right: 12px;
-    }
-}
-
-
-@media(max-width: 1024px) {
-    .highlight-slide-card {
-        grid-template-columns: 1fr;
-    }
-
-    .highlight-slide-card-image {
-        max-width: 420px;
-        margin: 0 auto;
-    }
-
-    .highlight-slide-inner {
-        padding: 2rem 1.5rem;
-    }
-}
-
-@media(max-width: 768px) {
-    .highlight-slider {
-        min-height: auto;
-    }
-
-    .highlight-slide-inner {
-        padding: 1.5rem 1rem;
-    }
-
-    .highlight-slide-card {
-        padding: 1.5rem;
-    }
-
-    .highlight-slide-card-title {
-        font-size: 2rem;
-    }
-
-    .highlight-slide-card-image {
-        width: 100%;
-    }
-
-    .highlight-nav {
-        width: 2.8rem;
-        height: 2.8rem;
-    }
-}
-
-/* Featured Section */
-.highlight-featured-section {
-    background: linear-gradient(135deg, rgba(176, 141, 87, 0.08) 0%, rgba(176, 141, 87, 0.03) 100%);
-    border: 1px solid rgba(176, 141, 87, 0.12);
-    border-radius: 32px;
-    padding: 4rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-    margin-top: 3rem;
-}
-
-.highlight-featured-image {
-    position: relative;
-    height: 420px;
-    border-radius: 28px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(176, 141, 87, 0.15);
-    border: 2px solid #FFFFFF;
-    outline: 1px solid rgba(176, 141, 87, 0.2);
-}
-
-.highlight-featured-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.8s ease;
-}
-
-.highlight-featured-image:hover img {
-    transform: scale(1.05);
-}
-
-.highlight-featured-content h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem;
-    font-weight: 600;
-    color: var(--dark-color);
-    margin: 1rem 0;
-    line-height: 1.3;
-}
-
-.highlight-featured-content p {
-    color: #555;
-    font-size: 0.95rem;
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
-}
-
-@media(max-width: 1024px) {
-    .highlight-featured-section {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-        padding: 3rem;
-    }
-    
-    .highlight-featured-image {
-        height: 350px;
-    }
-}
-
-@media(max-width: 768px) {
-    .highlight-grid-container {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-    
-    .highlight-card {
-        height: 320px;
-    }
-    
-    .highlight-featured-section {
-        padding: 2rem;
-    }
-    
-    .highlight-featured-image {
-        height: 280px;
-    }
-    
-    .highlight-featured-content h3 {
-        font-size: 1.6rem;
-    }
-}
-
-        /* Testimonials standard viewport styling */
+        .highlight {
+            position: relative;
+            background: linear-gradient(180deg, #FFFFFF 0%, #FAF8F5 100%);
+            padding: 6rem 2rem 10rem !important;
+        }
+
+        .highlight-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .highlight-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .highlight-header .section-sub {
+            max-width: 760px;
+            margin: 0.6rem auto 0;
+            color: #6b6b6b;
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .highlight-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .highlight-card {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            height: 380px;
+            background: #FFFFFF;
+            border: 1px solid rgba(176, 141, 87, 0.1);
+            box-shadow: 0 10px 35px rgba(176, 141, 87, 0.05);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(12px);
+            animation: highlightFade 560ms cubic-bezier(0.22, 0.9, 0.35, 1) forwards;
+        }
+
+        .highlight-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(176, 141, 87, 0.15);
+            border-color: rgba(176, 141, 87, 0.25);
+        }
+
+        .highlight-card-image {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            transition: transform 0.6s ease, opacity 0.6s ease;
+            z-index: 1;
+        }
+
+        .highlight-card:hover .highlight-card-image {
+            transform: scale(1.08);
+        }
+
+        @keyframes highlightFade {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .highlight-card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                180deg,
+                rgba(26, 18, 6, 0) 0%,
+                rgba(26, 18, 6, 0.3) 50%,
+                rgba(26, 18, 6, 0.95) 100%
+            );
+            z-index: 2;
+            transition: background 0.4s ease;
+        }
+
+        .highlight-card:hover .highlight-card-overlay {
+            background: linear-gradient(
+                180deg,
+                rgba(26, 18, 6, 0.1) 0%,
+                rgba(26, 18, 6, 0.4) 50%,
+                rgba(26, 18, 6, 0.98) 100%
+            );
+        }
+
+        .highlight-card-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: 100%;
+            transform: translateY(20px);
+            transition: transform 0.4s ease;
+        }
+
+        .highlight-card:hover .highlight-card-content {
+            transform: translateY(0);
+        }
+
+        .highlight-card-cat {
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #D6C7B2;
+            margin-bottom: 0.5rem;
+            display: block;
+            font-weight: 700;
+            opacity: 0.9;
+        }
+
+        .highlight-card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #FFFFFF;
+            margin: 0 0 0.5rem 0;
+            line-height: 1.3;
+            transition: color 0.3s ease;
+        }
+
+        .highlight-card:hover .highlight-card-title {
+            color: #FFF9F0;
+        }
+
+        .highlight-card-desc {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.5;
+            margin: 0;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .highlight-card:hover .highlight-card-desc {
+            opacity: 1;
+        }
+
+        .highlight-hero {
+            display: grid;
+            grid-template-columns: minmax(320px, 1fr) minmax(320px, 380px);
+            align-items: center;
+            gap: 2rem;
+            padding: 1.5rem 0;
+        }
+
+        .highlight-slider {
+            position: relative;
+            width: 100%;
+            max-width: 520px;
+            min-height: 520px;
+            border-radius: 36px;
+            overflow: hidden;
+            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.12), transparent 24%), linear-gradient(180deg, rgba(14, 10, 4, 0.08), rgba(11, 7, 4, 0.62));
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: 0 35px 90px rgba(0, 0, 0, 0.18);
+        }
+
+        .highlight-slider::before {
+            content: 'Glad Moments & Co';
+            position: absolute;
+            top: 48%;
+            left: 12%;
+            transform: translate(-10%, -50%);
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(4.5rem, 6vw, 7rem);
+            color: rgba(255, 255, 255, 0.08);
+            letter-spacing: 0.38em;
+            text-transform: uppercase;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .highlight-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.9s ease, visibility 0.9s ease;
+        }
+
+        .highlight-slide.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .highlight-slide::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(12, 9, 5, 0.12), rgba(7, 4, 2, 0.7));
+            z-index: 1;
+        }
+
+        .highlight-slide-inner {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: grid;
+            place-items: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .highlight-slide-frame {
+            width: 100%;
+            max-width: 430px;
+            aspect-ratio: 1 / 1;
+            padding: 1.5rem;
+            border-radius: 34px;
+            background: rgba(255, 255, 255, 0.98);
+            border: 1px solid rgba(176, 141, 87, 0.16);
+            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.12);
+            display: grid;
+            place-items: center;
+        }
+
+        .highlight-slide-photo {
+            width: 100%;
+            height: 100%;
+            border-radius: 28px;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.14);
+        }
+
+        .highlight-slide-photo-caption {
+            margin: 1rem 0 0;
+            color: #5B5B5B;
+            font-size: 0.95rem;
+            line-height: 1.75;
+            text-align: center;
+            max-width: 420px;
+        }
+
+        .highlight-aside {
+            position: relative;
+            display: grid;
+            gap: 1rem;
+            padding: 2rem 1.75rem;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(176, 141, 87, 0.12);
+            border-radius: 32px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(20px);
+        }
+
+        .highlight-aside::before {
+            content: 'Glad';
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            color: rgba(176, 141, 87, 0.08);
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            z-index: 0;
+        }
+
+        .highlight-aside-tag {
+            font-size: 0.75rem;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #B08D57;
+            font-weight: 700;
+            z-index: 1;
+        }
+
+        .highlight-aside-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.7rem, 4vw, 4.4rem);
+            line-height: 0.95;
+            color: #1A1206;
+            letter-spacing: 0.04em;
+            margin: 0;
+            z-index: 1;
+        }
+
+        .highlight-aside-title {
+            font-size: 1.05rem;
+            color: #4F4F4F;
+            line-height: 1.75;
+            margin: 0;
+            z-index: 1;
+        }
+
+        .highlight-aside-text {
+            margin: 0;
+            color: #5B5B5B;
+            font-size: 0.98rem;
+            line-height: 1.8;
+            z-index: 1;
+        }
+
+        .highlight-aside-features {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 0.75rem;
+            z-index: 1;
+        }
+
+        .highlight-aside-features li {
+            position: relative;
+            padding-left: 1.7rem;
+            color: #5B5B5B;
+            font-size: 0.95rem;
+            line-height: 1.75;
+        }
+
+        .highlight-aside-features li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #B08D57;
+            font-size: 1rem;
+        }
+
+        .highlight-pager {
+            margin-top: 1.5rem;
+        }
+
+        @media(max-width: 1024px) {
+            .highlight-hero {
+                grid-template-columns: 1fr;
+            }
+
+            .highlight-slider {
+                max-width: 100%;
+                min-height: 480px;
+            }
+        }
+
+        @media(max-width: 768px) {
+            .highlight-slider {
+                min-height: 420px;
+            }
+
+            .highlight-slide-inner {
+                padding: 1rem;
+            }
+
+            .highlight-slide-frame {
+                max-width: 100%;
+                padding: 1rem;
+            }
+
+            .highlight-aside {
+                padding: 1.5rem 1rem;
+            }
+
+            .highlight-aside-brand {
+                font-size: 2.5rem;
+            }
+
+            .highlight-aside::before {
+                font-size: 3rem;
+                right: 12px;
+            }
+        }
+
+        @media(max-width: 1024px) {
+            .highlight-slide-card {
+                grid-template-columns: 1fr;
+            }
+
+            .highlight-slide-card-image {
+                max-width: 420px;
+                margin: 0 auto;
+            }
+
+            .highlight-slide-inner {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        @media(max-width: 768px) {
+            .highlight-slider {
+                min-height: auto;
+            }
+
+            .highlight-slide-inner {
+                padding: 1.5rem 1rem;
+            }
+
+            .highlight-slide-card {
+                padding: 1.5rem;
+            }
+
+            .highlight-slide-card-title {
+                font-size: 2rem;
+            }
+
+            .highlight-slide-card-image {
+                width: 100%;
+            }
+
+            .highlight-nav {
+                width: 2.8rem;
+                height: 2.8rem;
+            }
+        }
+
+        .highlight-featured-section {
+            background: linear-gradient(135deg, rgba(176, 141, 87, 0.08) 0%, rgba(176, 141, 87, 0.03) 100%);
+            border: 1px solid rgba(176, 141, 87, 0.12);
+            border-radius: 32px;
+            padding: 4rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-top: 3rem;
+        }
+
+        .highlight-featured-image {
+            position: relative;
+            height: 420px;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(176, 141, 87, 0.15);
+            border: 2px solid #FFFFFF;
+            outline: 1px solid rgba(176, 141, 87, 0.2);
+        }
+
+        .highlight-featured-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .highlight-featured-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .highlight-featured-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin: 1rem 0;
+            line-height: 1.3;
+        }
+
+        .highlight-featured-content p {
+            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        @media(max-width: 1024px) {
+            .highlight-featured-section {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                padding: 3rem;
+            }
+            
+            .highlight-featured-image {
+                height: 350px;
+            }
+        }
+
+        @media(max-width: 768px) {
+            .highlight-grid-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .highlight-card {
+                height: 320px;
+            }
+            
+            .highlight-featured-section {
+                padding: 2rem;
+            }
+            
+            .highlight-featured-image {
+                height: 280px;
+            }
+            
+            .highlight-featured-content h3 {
+                font-size: 1.6rem;
+            }
+        }
+
         .testimonials {
             background: var(--primary-color) !important;
             text-align: center;
@@ -754,7 +742,6 @@
             }
         }
 
-        /* Availability standard viewport styling */
         .avail-section {
             background: #FFFFFF !important;
             text-align: center;
@@ -801,7 +788,6 @@
             }
         }
 
-        /* Footer brand layout */
         footer {
             background: #0F0D08 !important;
             border-top: 1px solid rgba(176, 141, 87, 0.15);
@@ -828,7 +814,6 @@
             }
         }
 
-        /* Premium Organic Wave Shape Dividers */
         .wave-divider {
             position: absolute;
             width: 100%;
@@ -849,15 +834,14 @@
             height: 100%;
         }
 
-        /* Ensure sections have correct position relative for absolute dividers */
         .portfolio {
             position: relative !important;
-            padding-bottom: 9rem !important; /* Extra bottom padding for the wave shape */
+            padding-bottom: 9rem !important;
         }
         .testimonials {
             position: relative !important;
-            padding-top: 7rem !important; /* Extra top padding for the wave shape */
-            padding-bottom: 7rem !important; /* Extra bottom padding for the wave shape */
+            padding-top: 7rem !important;
+            padding-bottom: 7rem !important;
         }
         .avail-section {
             position: relative !important;
@@ -866,18 +850,81 @@
         }
         .cta-banner {
             position: relative !important;
-            padding-top: 9rem !important; /* Extra top padding for the wave shape */
+            padding-top: 9rem !important;
+        }
+
+        @media (max-width: 768px) {
+            .highlight {
+                padding: 4rem 1rem 6rem !important;
+            }
+
+            .highlight-hero {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem;
+            }
+
+            .highlight-slider {
+                min-height: 380px !important;
+                max-height: 440px;
+            }
+
+            .highlight-slider::before,
+            .highlight-aside::before {
+                display: none !important;
+            }
+
+            .highlight-slide-frame {
+                max-width: 90%;
+                aspect-ratio: 1 / 1;
+                padding: 1rem;
+            }
+
+            nav {
+                padding: 1rem !important;
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.8rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            .btn-nav {
+                padding: 0.4rem 1rem !important;
+            }
+
+            .avail-grid-container {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem !important;
+            }
+            .calendar-wrap {
+                padding: 1rem !important;
+            }
+            
+            .promo-popup-card {
+                width: 90% !important;
+                max-width: 340px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .highlight-card-title {
+                font-size: 1.3rem;
+            }
+            .nav-links {
+                gap: 0.5rem 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Global Liquid Gradient Page Transition curtains -->
     <div class="page-transition-overlay-container">
         <div class="transition-curtain curtain-1"></div>
         <div class="transition-curtain curtain-2"></div>
     </div>
 
-    <!-- Header Navigation -->
     <nav id="navbar">
         <div class="nav-logo">Glad Moments &amp; Co</div>
         <ul class="nav-links">
@@ -889,7 +936,6 @@
         </ul>
     </nav>
 
-    <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-pattern"></div>
         <div class="hero-deco hero-deco-1"></div>
@@ -910,7 +956,6 @@
         </div>
     </section>
 
-    <!-- Portfolio Section -->
     <section class="portfolio" id="portfolio">
         <div class="portfolio-header">
             <span class="section-tag" style="color:var(--accent)">Our Work</span>
@@ -941,7 +986,6 @@
             @endforeach
         </div>
 
-        <!-- Wave 1: Portfolio (Dark) to Services (Light) -->
         <div class="wave-divider wave-divider-bottom" style="height: 60px;">
             <svg viewBox="0 0 1440 120" preserveAspectRatio="none" fill="#FFFFFF">
                 <path d="M0,32 C320,120 720,0 1120,80 C1280,112 1380,64 1440,48 L1440,120 L0,120 Z"></path>
@@ -949,7 +993,6 @@
         </div>
     </section>
 
-    <!-- Services Section -->
     <section class="services" id="services">
         <div class="services-header section-center">
             <span class="section-tag">What We Offer</span>
@@ -986,65 +1029,65 @@
             @endforeach
         </div>
 
-                <div class="services-wave" style="position:absolute; bottom:-1px; left:0; width:100%; height:90px; overflow:hidden; pointer-events:none; z-index:0;">
-                    <svg viewBox="0 0 1440 120" preserveAspectRatio="none" width="100%" height="100%" fill="#FAF8F5" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M0,32 C240,96 480,96 720,64 C960,32 1200,16 1440,48 L1440,120 L0,120 Z"></path>
-                    </svg>
-                </div>
-            </section>
-
-          <!-- Highlight Section -->
-        <section class="highlight" id="highlight">
-    <div class="highlight-inner">
-        <div class="highlight-header section-center">
-            <span class="section-tag">Featured Event</span>
-            <h2 class="section-title">Setiap Momen<br/>Layak Diabadikan</h2>
-            <p class="section-sub">Kami percaya bahwa setiap cerita layak dipresentasikan dalam format yang anggun, berkelas, dan tak lekang waktu.</p>
-        </div>
-
-        @php
-            $filteredHighlights = ($highlights ?? collect())->reject(function($h) {
-                $cat = strtolower(trim($h->category ?? ''));
-                return str_contains($cat, 'photobooth') || str_contains($cat, 'photoboothevent');
-            })->values();
-        @endphp
-
-        @if($filteredHighlights->count())
-            <div class="highlight-hero">
-                <div class="highlight-slider" id="highlightSlider">
-                    @foreach($filteredHighlights as $slide)
-                        <div class="highlight-slide{{ $loop->first ? ' active' : '' }}">
-                            <div class="highlight-slide-inner">
-                                <div class="highlight-slide-frame">
-                                    <div class="highlight-slide-photo" style="background-image: url('{{ $slide->image_url }}');"></div>
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                    <button class="highlight-nav highlight-prev" type="button" aria-label="Sebelumnya">‹</button>
-                    <button class="highlight-nav highlight-next" type="button" aria-label="Berikutnya">›</button>
-                    <div class="highlight-pager" id="highlightPager">
-                        @foreach($filteredHighlights as $slide)
-                            <button class="highlight-dot{{ $loop->first ? ' active' : '' }}" type="button" data-index="{{ $loop->index }}"></button>
-                        @endforeach
-                    </div>
-                </div>
-                <div class="highlight-aside">
-                    <span class="highlight-aside-tag">Signature Story</span>
-                    <div class="highlight-aside-brand">Glad Moments &amp; Co</div>
-                </div>
-        @else
-            <p class="section-sub" style="text-align:center;">Tidak ada highlight yang tersedia saat ini.</p>
-        @endif
-
-        <div class="wave-divider wave-divider-bottom" style="height: 90px;">
-            <svg viewBox="0 0 1440 120" preserveAspectRatio="none" fill="var(--primary-color)">
-                <path d="M0,48 C240,18 480,88 720,56 C960,24 1200,16 1440,56 L1440,120 L0,120 Z"></path>
+        <div class="services-wave" style="position:absolute; bottom:-1px; left:0; width:100%; height:90px; overflow:hidden; pointer-events:none; z-index:0;">
+            <svg viewBox="0 0 1440 120" preserveAspectRatio="none" width="100%" height="100%" fill="#FAF8F5" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0,32 C240,96 480,96 720,64 C960,32 1200,16 1440,48 L1440,120 L0,120 Z"></path>
             </svg>
         </div>
-    </div>
-</section>
-    <!-- Testimonials Section -->
+    </section>
+
+    <section class="highlight" id="highlight">
+        <div class="highlight-inner">
+            <div class="highlight-header section-center">
+                <span class="section-tag">Featured Event</span>
+                <h2 class="section-title">Setiap Momen<br/>Layak Diabadikan</h2>
+                <p class="section-sub">Kami percaya bahwa setiap cerita layak dipresentasikan dalam format yang anggun, berkelas, dan tak lekang waktu.</p>
+            </div>
+
+            @php
+                $filteredHighlights = ($highlights ?? collect())->reject(function($h) {
+                    $cat = strtolower(trim($h->category ?? ''));
+                    return str_contains($cat, 'photobooth') || str_contains($cat, 'photoboothevent');
+                })->values();
+            @endphp
+
+            @if($filteredHighlights->count())
+                <div class="highlight-hero">
+                    <div class="highlight-slider" id="highlightSlider">
+                        @foreach($filteredHighlights as $slide)
+                            <div class="highlight-slide{{ $loop->first ? ' active' : '' }}">
+                                <div class="highlight-slide-inner">
+                                    <div class="highlight-slide-frame">
+                                        <div class="highlight-slide-photo" style="background-image: url('{{ $slide->image_url }}');"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                        <button class="highlight-nav highlight-prev" type="button" aria-label="Sebelumnya">‹</button>
+                        <button class="highlight-nav highlight-next" type="button" aria-label="Berikutnya">›</button>
+                        <div class="highlight-pager" id="highlightPager">
+                            @foreach($filteredHighlights as $slide)
+                                <button class="highlight-dot{{ $loop->first ? ' active' : '' }}" type="button" data-index="{{ $loop->index }}"></button>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="highlight-aside">
+                        <span class="highlight-aside-tag">Signature Story</span>
+                        <div class="highlight-aside-brand">Glad Moments &amp; Co</div>
+                    </div>
+                </div>
+            @else
+                <p class="section-sub" style="text-align:center;">Tidak ada highlight yang tersedia saat ini.</p>
+            @endif
+
+            <div class="wave-divider wave-divider-bottom" style="height: 90px;">
+                <svg viewBox="0 0 1440 120" preserveAspectRatio="none" fill="var(--primary-color)">
+                    <path d="M0,48 C240,18 480,88 720,56 C960,24 1200,16 1440,56 L1440,120 L0,120 Z"></path>
+                </svg>
+            </div>
+        </div>
+    </section>
+
     <section class="testimonials" id="testimonials">
         <div class="testimonials-header section-center">
             <span class="section-tag">Kata Mereka</span>
@@ -1070,7 +1113,6 @@
             </div>
         </div>
 
-        <!-- Wave 3: Testimonials (Cream) to Availability (White) -->
         <div class="wave-divider wave-divider-bottom" style="height: 60px;">
             <svg viewBox="0 0 1440 120" preserveAspectRatio="none" fill="#FFFFFF">
                 <path d="M0,64 C288,120 576,16 864,80 C1152,144 1440,64 1440,64 L1440,120 L0,120 Z"></path>
@@ -1078,7 +1120,6 @@
         </div>
     </section>
 
-    <!-- Availability Section -->
     <section class="avail-section" id="availability">
         <div class="avail-header section-center">
             <span class="section-tag">Schedule</span>
@@ -1087,7 +1128,6 @@
         </div>
         
         <div class="avail-grid-container">
-            <!-- Calendar for Glad to Call -->
             <div class="calendar-wrap">
                 <h3 style="font-family:'Playfair Display',serif;font-weight:600;color:var(--accent-color);margin-bottom:1.5rem;font-size:1.25rem;">Glad to Call</h3>
                 <div class="cal-header">
@@ -1098,7 +1138,6 @@
                 <div class="cal-grid" id="calGrid-gladtocall"></div>
             </div>
 
-            <!-- Calendar for Glad Moments -->
             <div class="calendar-wrap">
                 <h3 style="font-family:'Playfair Display',serif;font-weight:600;color:var(--accent-color);margin-bottom:1.5rem;font-size:1.25rem;">Glad Moments</h3>
                 <div class="cal-header">
@@ -1119,9 +1158,7 @@
         <a class="btn-primary" href="{{ route('booking.index') }}" style="margin:0 auto;display:inline-block">Pesan Tanggal Ini</a>
     </section>
 
-    <!-- Booking CTA Banner -->
     <section class="cta-banner" id="booking">
-        <!-- Wave 4: Availability (White) to Booking CTA (Dark) -->
         <div class="wave-divider wave-divider-top" style="height: 60px;">
             <svg viewBox="0 0 1440 120" preserveAspectRatio="none" fill="#FFFFFF">
                 <path d="M0,0 L1440,0 L1440,48 C1200,96 960,16 720,80 C480,144 240,32 0,64 Z"></path>
@@ -1136,7 +1173,6 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer id="contact">
         <div class="footer-brand">
             <span class="nav-logo">Glad Moments &amp; Co</span>
@@ -1174,7 +1210,6 @@
         </div>
     </footer>
 
-    <!-- Floating WhatsApp Button -->
     <a class="wa-float" href="https://wa.me/6287788991305" title="Chat WhatsApp">
         <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"></path>
