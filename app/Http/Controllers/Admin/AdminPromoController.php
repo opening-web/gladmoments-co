@@ -25,9 +25,7 @@ class AdminPromoController extends Controller
     {
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'caption' => 'nullable|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
-            'cta_text' => 'nullable|string|max:100',
             'cta_url' => 'required_if:is_active,1|string|max:255',
             'cta_target' => 'nullable|in:_self,_blank',
             'priority' => 'nullable|integer|min:0',
@@ -38,8 +36,6 @@ class AdminPromoController extends Controller
 
         $payload = [
             'title' => $data['title'],
-            'caption' => $data['caption'] ?? null,
-            'cta_text' => $data['cta_text'] ?? 'Lihat Promo',
             'cta_url' => $data['cta_url'] ?? null,
             'cta_target' => $data['cta_target'] ?? '_self',
             'priority' => $data['priority'] ?? 0,
@@ -78,9 +74,7 @@ class AdminPromoController extends Controller
     {
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'caption' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
-            'cta_text' => 'nullable|string|max:100',
             'cta_url' => 'required_if:is_active,1|string|max:255',
             'cta_target' => 'nullable|in:_self,_blank',
             'priority' => 'nullable|integer|min:0',
@@ -102,8 +96,6 @@ class AdminPromoController extends Controller
         }
 
         $promo->title = $data['title'];
-        $promo->caption = $data['caption'] ?? null;
-        $promo->cta_text = $data['cta_text'] ?? 'Lihat Promo';
         $promo->cta_url = $data['cta_url'] ?? null;
         $promo->cta_target = $data['cta_target'] ?? '_self';
         $promo->priority = $data['priority'] ?? 0;

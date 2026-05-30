@@ -1023,17 +1023,16 @@
                     @endforeach
                     <button class="highlight-nav highlight-prev" type="button" aria-label="Sebelumnya">‹</button>
                     <button class="highlight-nav highlight-next" type="button" aria-label="Berikutnya">›</button>
+                    <div class="highlight-pager" id="highlightPager">
+                        @foreach($filteredHighlights as $slide)
+                            <button class="highlight-dot{{ $loop->first ? ' active' : '' }}" type="button" data-index="{{ $loop->index }}"></button>
+                        @endforeach
+                    </div>
                 </div>
                 <div class="highlight-aside">
                     <span class="highlight-aside-tag">Signature Story</span>
                     <div class="highlight-aside-brand">Glad Moments &amp; Co</div>
                 </div>
-                <div class="highlight-pager" id="highlightPager">
-                    @foreach($filteredHighlights as $slide)
-                        <button class="highlight-dot{{ $loop->first ? ' active' : '' }}" type="button" data-index="{{ $loop->index }}"></button>
-                    @endforeach
-                </div>
-            </div>
         @else
             <p class="section-sub" style="text-align:center;">Tidak ada highlight yang tersedia saat ini.</p>
         @endif
@@ -1184,17 +1183,11 @@
     </a>
 
     @if(isset($popupPromo) && $popupPromo)
-        <div id="promoPopup" class="promo-popup-overlay">
+        <div id="promoPopup" class="promo-popup-overlay" data-booking-url="{{ $popupPromo->cta_url }}">
             <div class="promo-popup-card">
                 <button id="promoPopupClose" class="promo-popup-close" type="button" aria-label="Tutup">×</button>
-                <a class="promo-popup-link" href="{{ $popupPromo->cta_url }}" target="{{ $popupPromo->cta_target }}">
+                <a class="promo-popup-link" href="{{ $popupPromo->cta_url }}">
                     <img class="promo-popup-image" src="{{ $popupPromo->image_url }}" alt="{{ $popupPromo->title }}">
-                    <div class="promo-popup-body">
-                        <span class="promo-popup-badge">Promo</span>
-                        <h2>{{ $popupPromo->title }}</h2>
-                        <p>{{ $popupPromo->caption ?? 'Dapatkan penawaran spesial sekarang juga.' }}</p>
-                        <span class="promo-popup-action">{{ $popupPromo->cta_text ?? 'Lihat Promo' }}</span>
-                    </div>
                 </a>
             </div>
         </div>

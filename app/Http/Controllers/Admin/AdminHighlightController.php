@@ -24,8 +24,6 @@ class AdminHighlightController extends Controller
     {
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'category' => 'nullable|in:wedding,photobooth,birthday,brand',
-            'caption' => 'nullable|string|max:255',
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
             'is_active' => 'nullable|boolean',
         ]);
@@ -35,8 +33,6 @@ class AdminHighlightController extends Controller
         try {
             Highlight::create([
                 'title' => $data['title'],
-                'category' => $data['category'] ?? null,
-                'caption' => $data['caption'] ?? null,
                 'image_path' => $path,
                 'is_active' => $request->boolean('is_active', true),
             ]);
@@ -45,7 +41,7 @@ class AdminHighlightController extends Controller
             return back()->withErrors(['save_error' => $e->getMessage()])->withInput();
         }
 
-        return redirect()->route('admin.highlights.index')->with('success', 'Highlight berhasil ditambahkan.');
+        return redirect()->route('admin.highlights.index')->with('success', 'Footage highlight berhasil ditambahkan.');
     }
 
     public function edit(Highlight $highlight)
@@ -62,8 +58,6 @@ class AdminHighlightController extends Controller
     {
         $data = $request->validate([
             'title' => 'required|string|max:255',
-            'category' => 'nullable|in:wedding,photobooth,birthday,brand',
-            'caption' => 'nullable|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:10240',
             'is_active' => 'nullable|boolean',
         ]);
@@ -76,12 +70,10 @@ class AdminHighlightController extends Controller
         }
 
         $highlight->title = $data['title'];
-        $highlight->category = $data['category'] ?? null;
-        $highlight->caption = $data['caption'] ?? null;
         $highlight->is_active = $request->boolean('is_active', true);
         $highlight->save();
 
-        return redirect()->route('admin.highlights.index')->with('success', 'Highlight berhasil diperbarui.');
+        return redirect()->route('admin.highlights.index')->with('success', 'Footage highlight berhasil diperbarui.');
     }
 
     public function destroy(Highlight $highlight)
@@ -92,7 +84,7 @@ class AdminHighlightController extends Controller
 
         $highlight->delete();
 
-        return redirect()->route('admin.highlights.index')->with('success', 'Highlight berhasil dihapus.');
+        return redirect()->route('admin.highlights.index')->with('success', 'Footage highlight berhasil dihapus.');
     }
 }
 

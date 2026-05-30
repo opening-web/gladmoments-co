@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Package;
 use App\Models\Payment;
+use App\Models\Promo;
 use App\Models\Schedule;
 use App\Models\Service;
 use Illuminate\Http\Request;
@@ -14,6 +15,13 @@ class BookingController extends Controller
 {
     public function index(Request $request)
     {
+        $promoId = $request->query('promo_id');
+        $promo = null;
+
+        if ($promoId) {
+            $promo = Promo::find($promoId);
+        }
+
         $preselectedType = $request->query('type', 'photobooth');
         if (! in_array($preselectedType, ['photobooth', 'audio', 'bundle'], true)) {
             $preselectedType = 'photobooth';
@@ -24,18 +32,69 @@ class BookingController extends Controller
         // Fetch dynamic packages from database
         $photoboothService = Service::where('slug', 'gladmoments')->first();
         if ($photoboothService && $photoboothService->packages->count() > 0) {
-            $formConfig['photobooth_packages'] = $photoboothService->packages->pluck('price', 'name')->toArray();
+            $formConfig['photobooth_packages'] = $photoboothService->packages->mapWithKeys(function ($package) {
+                return [$package->name => $package->discounted_price ?? $package->price];
+            })->toArray();
+
+            $formConfig['photobooth_package_meta'] = $photoboothService->packages->mapWithKeys(function ($package) {
+                return [$package->name => $this->buildPackageMeta($package)];
+            })->toArray();
+
+            $formConfig['photobooth_package_details'] = $photoboothService->packages->mapWithKeys(function ($package) {
+                $description = trim($package->description ?? '');
+                $parts = $description === '' ? [] : preg_split('/\r?\n/', $description);
+                return [$package->name => $parts ?: [$description ?: 'Detail paket belum tersedia.']];
+            })->toArray();
+        } else {
+            $formConfig['photobooth_package_meta'] = $this->buildFallbackPackageMeta($formConfig['photobooth_packages']);
+            $formConfig['photobooth_package_details'] = config('booking-forms.photobooth_package_details');
         }
 
-        $audioService = Service::where('slug', 'gladtocall')->first();
+        $audioService = Service::findBySlug('gladtocall');
         if ($audioService && $audioService->packages->count() > 0) {
-            $formConfig['audio_packages'] = $audioService->packages->pluck('price', 'name')->toArray();
+            $formConfig['audio_packages'] = $audioService->packages->mapWithKeys(function ($package) {
+                return [$package->name => $package->discounted_price ?? $package->price];
+            })->toArray();
+
+            $formConfig['audio_package_meta'] = $audioService->packages->mapWithKeys(function ($package) {
+                return [$package->name => $this->buildPackageMeta($package)];
+            })->toArray();
+
+            $formConfig['audio_package_details'] = $audioService->packages->mapWithKeys(function ($package) {
+                $description = trim($package->description ?? '');
+                $parts = $description === '' ? [] : preg_split('/\r?\n/', $description);
+                return [$package->name => $parts ?: [$description ?: 'Detail paket belum tersedia.']];
+            })->toArray();
+        } else {
+            $formConfig['audio_package_meta'] = $this->buildFallbackPackageMeta($formConfig['audio_packages']);
+            $formConfig['audio_package_details'] = config('booking-forms.audio_package_details');
+        }
+
+        $bundleService = Service::where('slug', 'bundle')->first();
+        if ($bundleService && $bundleService->packages->count() > 0) {
+            $formConfig['bundle_packages'] = $bundleService->packages->mapWithKeys(function ($package) {
+                return [$package->name => $package->discounted_price ?? $package->price];
+            })->toArray();
+
+            $formConfig['bundle_package_meta'] = $bundleService->packages->mapWithKeys(function ($package) {
+                return [$package->name => $this->buildPackageMeta($package)];
+            })->toArray();
+
+            $formConfig['bundle_package_details'] = $bundleService->packages->mapWithKeys(function ($package) {
+                $description = trim($package->description ?? '');
+                $parts = $description === '' ? [] : preg_split('/\r?\n/', $description);
+                return [$package->name => $parts ?: [$description ?: 'Detail paket belum tersedia.']];
+            })->toArray();
+        } else {
+            $formConfig['bundle_package_meta'] = $this->buildFallbackPackageMeta($formConfig['bundle_packages']);
+            $formConfig['bundle_package_details'] = config('booking-forms.bundle_package_details');
         }
 
         return view('pages.booking', [
             'preselectedType' => $preselectedType,
             'formConfig' => $formConfig,
             'downPaymentAmount' => config('booking.down_payment_amount'),
+            'promo' => $promo,
         ]);
     }
 
@@ -137,6 +196,7 @@ class BookingController extends Controller
 
         $data = $request->validate([
             'booking_type' => 'required|in:photobooth',
+            'promo_id' => 'nullable|exists:promos,id',
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
             'event_title' => 'required|string|max:255',
@@ -159,7 +219,7 @@ class BookingController extends Controller
 
     private function validateAudio(Request $request): array
     {
-        $audioService = Service::where('slug', 'gladtocall')->first();
+        $audioService = Service::findBySlug('gladtocall');
         if ($audioService && $audioService->packages->count() > 0) {
             $packages = $audioService->packages->pluck('name')->toArray();
         } else {
@@ -168,6 +228,7 @@ class BookingController extends Controller
 
         $data = $request->validate([
             'booking_type' => 'required|in:audio',
+            'promo_id' => 'nullable|exists:promos,id',
             'recipient_name' => 'required|string|max:255',
             'recipient_phone' => ['required', 'regex:/^[0-9]+$/', 'max:20'],
             'customer_email' => 'required|email|max:255',
@@ -198,8 +259,16 @@ class BookingController extends Controller
 
     private function validateBundle(Request $request): array
     {
+        $bundleService = Service::where('slug', 'bundle')->first();
+        if ($bundleService && $bundleService->packages->count() > 0) {
+            $packages = $bundleService->packages->pluck('name')->toArray();
+        } else {
+            $packages = array_keys(config('booking-forms.bundle_packages'));
+        }
+
         $data = $request->validate([
             'booking_type' => 'required|in:bundle',
+            'promo_id' => 'nullable|exists:promos,id',
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
             'venue_maps' => 'required|string|max:500',
@@ -220,12 +289,42 @@ class BookingController extends Controller
             'signage' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240',
             'pic_name' => 'required|string|max:255',
             'customer_phone' => ['required', 'regex:/^[0-9]+$/', 'max:20'],
+            'package_choice' => ['required', Rule::in($packages)],
         ]);
 
-        $data['package_choice'] = 'Bundle PhotoBooth + Audio Guestbook';
         $data['event_time'] = $data['event_start_time'];
 
         return $this->appendUpload($request, $data, 'signage');
+    }
+
+    private function buildPackageMeta($package): array
+    {
+        $originalPrice = (float) $package->price;
+        $discountedPrice = $package->discounted_price !== null ? (float) $package->discounted_price : null;
+        $hasDiscount = $discountedPrice !== null && $discountedPrice < $originalPrice;
+
+        return [
+            'price' => $originalPrice,
+            'discounted_price' => $discountedPrice ?? $originalPrice,
+            'promo_percent' => $package->promo_percent ? (int) $package->promo_percent : 0,
+            'has_discount' => $hasDiscount,
+            'savings' => $hasDiscount ? round($originalPrice - $discountedPrice, 2) : 0,
+        ];
+    }
+
+    private function buildFallbackPackageMeta(array $packages): array
+    {
+        return collect($packages)->mapWithKeys(function ($price, $name) {
+            $originalPrice = (float) $price;
+
+            return [$name => [
+                'price' => $originalPrice,
+                'discounted_price' => $originalPrice,
+                'promo_percent' => 0,
+                'has_discount' => false,
+                'savings' => 0,
+            ]];
+        })->toArray();
     }
 
     private function appendUpload(Request $request, array $data, string $field): array
@@ -237,7 +336,7 @@ class BookingController extends Controller
         return $data;
     }
 
-    private function resolvePackageId(string $type, string $packageChoice = null): int
+    private function resolvePackageId(string $type, ?string $packageChoice = null): int
     {
         if ($packageChoice) {
             $package = Package::where('name', $packageChoice)->first();
@@ -253,13 +352,19 @@ class BookingController extends Controller
             default => 'gladmoments',
         };
 
-        return Package::whereHas('service', fn ($q) => $q->where('slug', $slug))->value('id')
+        return Package::whereHas('service', fn ($q) => $q->whereIn('slug', Service::slugAliases($slug)))->value('id')
             ?? Package::query()->value('id');
     }
 
     private function ensureScheduleDateIsAvailable(string $eventDate): void
     {
-        if (Schedule::whereDate('date', $eventDate)->where('status', 'Booked')->exists()) {
+        if (Schedule::whereDate('date', $eventDate)
+            ->where(function ($query) {
+                $query->whereRaw('LOWER(status) = ?', ['booked'])
+                      ->orWhereRaw('LOWER(status) = ?', ['maintenance']);
+            })
+            ->exists()
+        ) {
             throw \Illuminate\Validation\ValidationException::withMessages([
                 'event_date' => 'Tanggal ' . date('d M Y', strtotime($eventDate)) . ' sudah terisi jadwal. Silakan pilih tanggal lain.',
             ]);
@@ -270,14 +375,14 @@ class BookingController extends Controller
     {
         $package = Package::where('name', $packageChoice)->first();
         if ($package) {
-            return $package->price;
+            return $package->discounted_price ?? $package->price;
         }
 
         // Fallback
         return match ($type) {
             'photobooth' => config("booking-forms.photobooth_packages.{$packageChoice}", 1500000),
             'audio' => config("booking-forms.audio_packages.{$packageChoice}", 2500000),
-            'bundle' => 5800000,
+            'bundle' => config("booking-forms.bundle_packages.{$packageChoice}", 5800000),
             default => 1500000,
         };
     }

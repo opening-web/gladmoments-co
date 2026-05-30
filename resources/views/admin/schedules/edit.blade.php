@@ -16,7 +16,7 @@
                 <label class="form-label fw-semibold">Pilih Layanan</label>
                 <select name="service_id" class="form-select" required>
                     @foreach($services as $service)
-                        <option value="{{ $service->id }}" {{ $schedule->service_id == $service->id ? 'selected' : '' }}>
+                        <option value="{{ $service->id }}" {{ (old('service_id', $schedule->service_id) == $service->id) ? 'selected' : '' }}>
                             {{ $service->name }}
                         </option>
                     @endforeach
@@ -42,10 +42,11 @@
             <div class="mb-3">
                 <label class="form-label fw-semibold">Status</label>
                 <select name="status" class="form-select" required>
-                    <option value="Available" {{ $schedule->status == 'Available' ? 'selected' : '' }}>Available</option>
-                    <option value="Booked" {{ $schedule->status == 'Booked' ? 'selected' : '' }}>Booked</option>
-                    <option value="Maintenance" {{ $schedule->status == 'Maintenance' ? 'selected' : '' }}>Maintenance</option>
+                    <option value="Available" {{ old('status', $schedule->status) == 'Available' ? 'selected' : '' }}>Available</option>
+                    <option value="Booked" {{ old('status', $schedule->status) == 'Booked' ? 'selected' : '' }}>Booked</option>
+                    <option value="Maintenance" {{ old('status', $schedule->status) == 'Maintenance' ? 'selected' : '' }}>Maintenance</option>
                 </select>
+                <div class="form-text">Pilih "Booked" untuk menandai jadwal sebagai sudah terisi. Tanggal ini akan muncul sebagai tidak tersedia di kalender ketersediaan depan.</div>
             </div>
 
             <div class="d-flex justify-content-end gap-2">

@@ -34,7 +34,14 @@
                     @foreach($service->packages as $package)
                         <li>
                             <strong>{{ $package->name }}</strong>
-                            — Rp {{ number_format($package->price, 0, ',', '.') }}
+                            — 
+                            @if($package->discounted_price)
+                                <span style="text-decoration: line-through; color: #777;">Rp {{ number_format($package->price, 0, ',', '.') }}</span>
+                                <strong>Rp {{ number_format($package->discounted_price, 0, ',', '.') }}</strong>
+                                <span class="detail-text" style="font-size: .85rem; color: #b6316f;">({{ $package->promo_percent }}% off)</span>
+                            @else
+                                Rp {{ number_format($package->price, 0, ',', '.') }}
+                            @endif
                             @if($package->description)
                                 <br><span class="detail-text">{{ $package->description }}</span>
                             @endif

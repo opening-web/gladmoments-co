@@ -4,10 +4,10 @@
 <div class="container-fluid p-0">
     <div class="mb-4 d-flex justify-content-between align-items-center">
         <div>
-            <h2 class="fw-bold mb-1" style="color:#1A1412;">Highlight Management</h2>
-            <p class="text-muted mb-0">Kelola highlight yang tampil di beranda user.</p>
+            <h2 class="fw-bold mb-1" style="color:#1A1412;">Footage Highlight</h2>
+            <p class="text-muted mb-0">Kelola footage highlight yang tampil di beranda user.</p>
         </div>
-        <a href="{{ route('admin.highlights.create') }}" class="btn btn-dark">Tambah Highlight</a>
+        <a href="{{ route('admin.highlights.create') }}" class="btn btn-dark">Tambah Footage</a>
     </div>
 
     @if(session('success'))
@@ -20,7 +20,6 @@
                 <tr>
                     <th>Gambar</th>
                     <th>Judul</th>
-                    <th>Kategori</th>
                     <th>Aktif</th>
                     <th>Aksi</th>
                 </tr>
@@ -36,7 +35,6 @@
                         <td>
                             <strong>{{ $item->title }}</strong>
                         </td>
-                        <td>{{ $item->category }}</td>
                         <td>
                             <span class="badge {{ $item->is_active ? 'bg-success' : 'bg-secondary' }}">
                                 {{ $item->is_active ? 'Aktif' : 'Nonaktif' }}
@@ -44,14 +42,14 @@
                         </td>
                         <td>
                             <a href="{{ route('admin.highlights.edit', $item->id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                            <form action="{{ route('admin.highlights.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus highlight ini?')">
+                            <form action="{{ route('admin.highlights.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Hapus footage ini?')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm btn-outline-danger">Hapus</button>
                             </form>
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="5" class="text-center text-muted">Belum ada data.</td></tr>
+                    <tr><td colspan="4" class="text-center text-muted">Belum ada data.</td></tr>
                 @endforelse
             </tbody>
         </table>

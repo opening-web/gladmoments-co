@@ -21,7 +21,10 @@ class ServiceController extends Controller
      */
     public function show($slug)
     {
-        $service = Service::where('slug', $slug)->firstOrFail();
+        $service = Service::findBySlug($slug);
+        if (! $service) {
+            abort(404);
+        }
         
         $viewName = "pages.services.{$slug}";
         if (view()->exists($viewName)) {

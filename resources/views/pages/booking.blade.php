@@ -78,17 +78,26 @@
 
 <section class="booking-section">
     <div class="booking-form-page">
-        <div class="booking-type-tabs">
-            <a href="{{ route('booking.index', ['type' => 'photobooth']) }}" class="booking-tab {{ $preselectedType === 'photobooth' ? 'active' : '' }}">
-                📸 PhotoBooth Only
-            </a>
-            <a href="{{ route('booking.index', ['type' => 'audio']) }}" class="booking-tab {{ $preselectedType === 'audio' ? 'active' : '' }}">
-                🎙️ Audio Guestbook Only
-            </a>
-            <a href="{{ route('booking.index', ['type' => 'bundle']) }}" class="booking-tab {{ $preselectedType === 'bundle' ? 'active' : '' }}">
-                ✨ Bundle
-            </a>
-        </div>
+            @if(isset($promo) && $promo)
+                <div class="promo-booking-banner mb-4 p-4 rounded-4" style="background: linear-gradient(135deg, rgba(251,57,112,0.1), rgba(255,216,163,0.12)); border: 1px solid rgba(251,57,112,0.18);">
+                    <div class="d-flex flex-column gap-2">
+                        <span class="text-uppercase fw-semibold" style="font-size: 0.8rem; letter-spacing: 0.16em; color: #b6316f;">Promo Spesial</span>
+                        <h2 class="mb-0" style="font-size: clamp(1.5rem, 2vw, 2rem); color: #1a1412;">{{ $promo->title }}</h2>
+                        <p class="mb-0 text-muted">{{ $promo->caption ?? 'Nikmati penawaran khusus dari promo ini. Isi form booking untuk memesan sekarang.' }}</p>
+                    </div>
+                </div>
+            @endif
+            <div class="booking-type-tabs">
+                <a href="{{ route('booking.index', array_filter(['type' => 'photobooth', 'promo_id' => $promo->id ?? null])) }}" class="booking-tab {{ $preselectedType === 'photobooth' ? 'active' : '' }}">
+                    📸 PhotoBooth Only
+                </a>
+                <a href="{{ route('booking.index', array_filter(['type' => 'audio', 'promo_id' => $promo->id ?? null])) }}" class="booking-tab {{ $preselectedType === 'audio' ? 'active' : '' }}">
+                    🎙️ Audio Guestbook Only
+                </a>
+                <a href="{{ route('booking.index', array_filter(['type' => 'bundle', 'promo_id' => $promo->id ?? null])) }}" class="booking-tab {{ $preselectedType === 'bundle' ? 'active' : '' }}">
+                    ✨ Bundle
+                </a>
+            </div>
 
         @if ($errors->any())
             <div class="alert-error">

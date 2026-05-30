@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="card shadow-sm border-0 p-4">
-    <h4 class="mb-4">Edit Highlight</h4>
+    <h4 class="mb-4">Edit Footage Highlight</h4>
     <form action="{{ route('admin.highlights.update', $highlight->id) }}" method="POST" enctype="multipart/form-data">
         @csrf @method('PUT')
         @if(session('success'))
@@ -22,25 +22,9 @@
             <input type="text" name="title" class="form-control" value="{{ old('title', $highlight->title) }}" required>
         </div>
         <div class="mb-3">
-            <label class="form-label">Kategori</label>
-            <select name="category" class="form-control">
-                <option value="" {{ old('category', $highlight->category) === '' ? 'selected' : '' }}>Pilih kategori</option>
-                <option value="wedding" {{ old('category', $highlight->category) === 'wedding' ? 'selected' : '' }}>Wedding</option>
-                <option value="photobooth" {{ old('category', $highlight->category) === 'photobooth' ? 'selected' : '' }}>Photobooth</option>
-                <option value="birthday" {{ old('category', $highlight->category) === 'birthday' ? 'selected' : '' }}>Birthday</option>
-                <option value="brand" {{ old('category', $highlight->category) === 'brand' ? 'selected' : '' }}>Brand</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Caption</label>
-            <textarea name="caption" class="form-control" rows="3">{{ old('caption', $highlight->caption) }}</textarea>
-        </div>
-        <div class="mb-3">
             <label class="form-label">Gambar Baru (opsional)</label>
-            <input type="file" name="image" class="form-control">
-            @if($highlight->image_url)
-                <img src="{{ $highlight->image_url }}" width="120" class="mt-2 rounded">
-            @endif
+            <input type="file" name="image" id="image" class="form-control" accept="image/*">
+            <img id="imagePreview" src="{{ $highlight->image_url ?? '' }}" width="120" class="mt-2 rounded{{ $highlight->image_url ? '' : ' d-none' }}" alt="Preview Gambar">
         </div>
         <div class="form-check mb-3">
             <input type="hidden" name="is_active" value="0">
@@ -52,5 +36,32 @@
         <button type="submit" class="btn btn-dark">Update</button>
     </form>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const imageInput = document.getElementById('image');
+        const imagePreview = document.getElementById('imagePreview');
+
+        if (!imageInput || !imagePreview) {
+            return;
+        }
+
+        imageInput.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (!file) {
+                if (!imagePreview.src) {
+                    imagePreview.classList.add('d-none');
+                }
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                imagePreview.src = event.target.result;
+                imagePreview.classList.remove('d-none');
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+</script>
 @endsection
 

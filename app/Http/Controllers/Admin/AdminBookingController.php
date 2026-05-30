@@ -75,7 +75,7 @@ class AdminBookingController extends Controller
     private function resolveBookingScheduleServiceIds(Booking $booking): array
     {
         if ($booking->booking_type === 'bundle') {
-            return Service::whereIn('slug', ['gladmoments', 'gladtocall'])->pluck('id')->filter()->values()->all();
+            return Service::whereIn('slug', array_merge(Service::slugAliases('gladtocall'), ['gladmoments']))->pluck('id')->filter()->values()->all();
         }
 
         if ($booking->package && $booking->package->service_id) {
@@ -88,7 +88,7 @@ class AdminBookingController extends Controller
         ];
 
         $slug = $slugMap[$booking->booking_type] ?? 'gladmoments';
-        $serviceId = Service::where('slug', $slug)->value('id');
+        $serviceId = Service::idBySlug($slug);
 
         return $serviceId ? [$serviceId] : [];
     }

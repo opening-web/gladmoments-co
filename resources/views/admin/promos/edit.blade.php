@@ -18,20 +18,8 @@
             </div>
         @endif
         <div class="mb-3">
-            <label class="form-label">Judul</label>
-            <input type="text" name="title" class="form-control" value="{{ old('title', $promo->title) }}" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Caption</label>
-            <textarea name="caption" class="form-control" rows="3">{{ old('caption', $promo->caption) }}</textarea>
-        </div>
-        <div class="mb-3">
             <label class="form-label">URL Promo</label>
-            <input type="text" name="cta_url" class="form-control" value="{{ old('cta_url', $promo->cta_url) }}" placeholder="Contoh: /booking atau https://shopee.co.id/...">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Teks Tombol</label>
-            <input type="text" name="cta_text" class="form-control" value="{{ old('cta_text', $promo->cta_text) }}" placeholder="Lihat Promo">
+            <input type="text" name="cta_url" class="form-control" value="{{ old('cta_url', $promo->cta_url) }}" placeholder="Contoh: /booking atau https://shopee.co.id/..." required>
         </div>
         <div class="row g-2 mb-3">
             <div class="col">

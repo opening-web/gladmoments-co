@@ -59,7 +59,7 @@ function renderCalendar(service) {
   const firstDay = new Date(calYear[service], calMonth[service], 1).getDay();
   const totalDays = new Date(calYear[service], calMonth[service] + 1, 0).getDate();
   const today = new Date();
-  const booked = (bookedDates[service] && bookedDates[service][calMonth[service] + 1]) || [];
+  const booked = (bookedDates[service] && bookedDates[service][calMonth[service] + 1]) || {};
   for (let i = 0; i < firstDay; i++) {
     const el = document.createElement('div'); el.className = 'cal-day empty'; grid.appendChild(el);
   }
@@ -67,9 +67,15 @@ function renderCalendar(service) {
     const el = document.createElement('div');
     el.textContent = d;
     let cls = 'cal-day';
-    if (booked.includes(d)) cls += ' booked';
+    const dayStatus = booked[d];
+    if (dayStatus === 'maintenance') cls += ' maintenance';
+    else if (dayStatus === 'booked') cls += ' booked';
     else cls += ' available';
     if (d === today.getDate() && calMonth[service] === today.getMonth() && calYear[service] === today.getFullYear()) cls += ' today';
+    if (dayStatus) {
+      el.dataset.status = dayStatus;
+      el.title = dayStatus === 'maintenance' ? 'Jadwal maintenance' : 'Sudah dipesan';
+    }
     el.className = cls;
     grid.appendChild(el);
   }
@@ -136,56 +142,65 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Highlight slider controls and autoplay
-  const highlightSlides = document.querySelectorAll('.highlight-slide');
-  const highlightDots = document.querySelectorAll('.highlight-dot');
-  const highlightNext = document.querySelector('.highlight-next');
-  const highlightPrev = document.querySelector('.highlight-prev');
-  let highlightIndex = 0;
-  let highlightInterval = null;
+  const highlightSlider = document.getElementById('highlightSlider');
+  if (highlightSlider) {
+    const highlightSlides = highlightSlider.querySelectorAll('.highlight-slide');
+    const highlightHero = highlightSlider.closest('.highlight-hero');
+    const highlightDots = highlightHero ? highlightHero.querySelectorAll('.highlight-dot') : document.querySelectorAll('.highlight-dot');
+    const highlightNext = highlightSlider.querySelector('.highlight-next');
+    const highlightPrev = highlightSlider.querySelector('.highlight-prev');
+    let highlightIndex = Array.from(highlightSlides).findIndex(slide => slide.classList.contains('active'));
+    if (highlightIndex < 0) {
+      highlightIndex = 0;
+    }
+    let highlightInterval = null;
 
-  function setHighlightSlide(index) {
-    if (!highlightSlides.length) return;
-    highlightIndex = (index + highlightSlides.length) % highlightSlides.length;
-    highlightSlides.forEach((slide, idx) => {
-      slide.classList.toggle('active', idx === highlightIndex);
-    });
-    highlightDots.forEach((dot, idx) => {
-      dot.classList.toggle('active', idx === highlightIndex);
-    });
-  }
+    function setHighlightSlide(index) {
+      if (!highlightSlides.length) return;
+      highlightIndex = (index + highlightSlides.length) % highlightSlides.length;
+      highlightSlides.forEach((slide, idx) => {
+        slide.classList.toggle('active', idx === highlightIndex);
+      });
+      highlightDots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === highlightIndex);
+      });
+    }
 
-  function startHighlightAutoplay() {
-    if (highlightInterval) clearInterval(highlightInterval);
-    highlightInterval = setInterval(() => {
-      setHighlightSlide(highlightIndex + 1);
-    }, 7000);
-  }
+    function startHighlightAutoplay() {
+      if (highlightInterval) clearInterval(highlightInterval);
+      if (highlightSlides.length <= 1) return;
+      highlightInterval = setInterval(() => {
+        setHighlightSlide(highlightIndex + 1);
+      }, 7000);
+    }
 
-  if (highlightDots.length) {
-    highlightDots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        setHighlightSlide(Number(dot.dataset.index));
+    if (highlightDots.length) {
+      highlightDots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          setHighlightSlide(Number(dot.dataset.index));
+          startHighlightAutoplay();
+        });
+      });
+    }
+
+    if (highlightNext) {
+      highlightNext.addEventListener('click', () => {
+        setHighlightSlide(highlightIndex + 1);
         startHighlightAutoplay();
       });
-    });
-  }
+    }
 
-  if (highlightNext) {
-    highlightNext.addEventListener('click', () => {
-      setHighlightSlide(highlightIndex + 1);
+    if (highlightPrev) {
+      highlightPrev.addEventListener('click', () => {
+        setHighlightSlide(highlightIndex - 1);
+        startHighlightAutoplay();
+      });
+    }
+
+    if (highlightSlides.length) {
+      setHighlightSlide(highlightIndex);
       startHighlightAutoplay();
-    });
-  }
-
-  if (highlightPrev) {
-    highlightPrev.addEventListener('click', () => {
-      setHighlightSlide(highlightIndex - 1);
-      startHighlightAutoplay();
-    });
-  }
-
-  if (highlightSlides.length) {
-    startHighlightAutoplay();
+    }
   }
 
   const promoModal = document.getElementById('promoPopup');
@@ -193,14 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const promoClose = document.getElementById('promoPopupClose');
     setTimeout(() => promoModal.classList.add('active'), 150);
 
-    promoClose?.addEventListener('click', () => {
+    promoClose?.addEventListener('click', (event) => {
+      event.stopPropagation();
       promoModal.classList.remove('active');
-    });
-
-    promoModal.addEventListener('click', (event) => {
-      if (event.target === promoModal) {
-        promoModal.classList.remove('active');
-      }
     });
   }
 });

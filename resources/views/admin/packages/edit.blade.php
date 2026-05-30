@@ -31,7 +31,18 @@
 
             <div class="mb-3">
                 <label class="form-label fw-semibold">Harga Paket (Rp) *</label>
-                <input type="number" name="price" class="form-control" value="{{ old('price', $package->price) }}" min="0" required>
+                <input type="number" name="price" id="packagePriceInput" class="form-control" value="{{ old('price', $package->price) }}" min="0" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Promo Diskon (%)</label>
+                <input type="number" name="promo_percent" id="promoPercentInput" class="form-control" value="{{ old('promo_percent', $package->promo_percent) }}" min="0" max="100" placeholder="Contoh: 10">
+                <div class="form-text">Masukkan persentase diskon paket. Biarkan kosong jika tidak ada promo.</div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Harga Setelah Diskon</label>
+                <input type="text" id="discountedPricePreview" class="form-control" disabled value="{{ $package->discounted_price ? 'Rp '.number_format($package->discounted_price, 0, ',', '.') : 'Rp '.number_format($package->price, 0, ',', '.') }}">
             </div>
 
             <div class="mb-3">
@@ -46,4 +57,38 @@
         </form>
     </div>
 </div>
+
+<script>
+    function formatPrice(amount) {
+        return 'Rp ' + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    function updateDiscountPreview() {
+        const priceInput = document.getElementById('packagePriceInput');
+        const promoInput = document.getElementById('promoPercentInput');
+        const previewInput = document.getElementById('discountedPricePreview');
+
+        const price = parseFloat(priceInput.value) || 0;
+        const percent = parseFloat(promoInput.value);
+        if (price > 0 && !Number.isNaN(percent) && percent > 0) {
+            const discount = Math.min(Math.max(percent, 0), 100);
+            const discounted = price * (1 - discount / 100);
+            previewInput.value = formatPrice(Math.round(discounted));
+        } else if (price > 0) {
+            previewInput.value = formatPrice(Math.round(price));
+        } else {
+            previewInput.value = 'Rp 0';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const priceInput = document.getElementById('packagePriceInput');
+        const promoInput = document.getElementById('promoPercentInput');
+        if (priceInput && promoInput) {
+            priceInput.addEventListener('input', updateDiscountPreview);
+            promoInput.addEventListener('input', updateDiscountPreview);
+            updateDiscountPreview();
+        }
+    });
+</script>
 @endsection

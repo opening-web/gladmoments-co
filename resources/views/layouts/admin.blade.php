@@ -322,7 +322,7 @@
                 </div>
                 <div class="{{ Request::is('admin/highlights*') ? 'active' : '' }}">
                     <a href="{{ route('admin.highlights.index') }}" class="nav-link-admin">
-                        <i class="fa-solid fa-star"></i> Highlight Management
+                        <i class="fa-solid fa-star"></i> Footage Highlight
                     </a>
                 </div>
                 <div class="{{ Request::is('admin/promos*') ? 'active' : '' }}">

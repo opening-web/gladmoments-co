@@ -62,9 +62,9 @@
         <div class="d-flex align-items-start">
             <i class="fa-solid fa-circle-check text-success fa-xl me-3 mt-1"></i>
             <div>
-                <h5 class="fw-bold mb-1" style="color: #1A1412;">Penyatuan Sistem Monolith Berhasil!</h5>
+                <h5 class="fw-bold mb-1" style="color: #1A1412;">ini merupakan dashboard admin Glad Moments & Co.</h5>
                 <p class="text-muted mb-0 small">
-                    Halaman admin dan user saat ini sudah berjalan harmonis dalam satu aplikasi terpadu. 
+                    admin dapat mengelola website menggunakan fitur-fitur yang ada di website ini. 
                     Semua perubahan data paket foto/video pada menu <strong>Service Management</strong> akan langsung mengubah isi katalog di halaman depan klien secara instan tanpa perlu repot sinkronisasi lagi.
                 </p>
             </div>

@@ -15,15 +15,14 @@
     </div>
 
     <div class="d-flex justify-content-between mb-3">
-        <div class="d-flex gap-2">
-            <a href="?status=" class="btn btn-sm {{ !$status ? 'btn-dark' : 'btn-outline-dark' }}">Semua</a>
-            <a href="?status=pending" class="btn btn-sm {{ $status == 'pending' ? 'btn-warning' : 'btn-outline-warning' }}">Pending</a>
-            <a href="?status=approved" class="btn btn-sm {{ $status == 'approved' ? 'btn-success' : 'btn-outline-success' }}">Approved</a>
-            <a href="?status=rejected" class="btn btn-sm {{ $status == 'rejected' ? 'btn-danger' : 'btn-outline-danger' }}">Rejected</a>
-        </div>
-        <form action="{{ route('admin.bookings.index') }}" method="GET" class="d-flex">
-            <input type="hidden" name="status" value="{{ $status }}">
-            <input type="text" name="search" class="form-control form-control-sm" placeholder="Cari nama/no HP..." value="{{ $search ?? '' }}">
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{{ route('admin.bookings.index', ['status' => '']) }}" class="btn btn-sm {{ !$status ? 'btn-dark' : 'btn-outline-dark' }}">Semua</a>
+                <a href="{{ route('admin.bookings.index', ['status' => 'pending']) }}" class="btn btn-sm {{ $status == 'pending' ? 'btn-warning' : 'btn-outline-warning' }}">Pending</a>
+                <a href="{{ route('admin.bookings.index', ['status' => 'approved']) }}" class="btn btn-sm {{ $status == 'approved' ? 'btn-success' : 'btn-outline-success' }}">Approved</a>
+                <a href="{{ route('admin.bookings.index', ['status' => 'rejected']) }}" class="btn btn-sm {{ $status == 'rejected' ? 'btn-danger' : 'btn-outline-danger' }}">Rejected</a>
+            </div>
+            <form action="{{ route('admin.bookings.index') }}" method="GET" class="d-flex">
+                <input type="hidden" name="status" value="{{ $status }}">
             <button type="submit" class="btn btn-sm btn-dark ms-1">Cari</button>
         </form>
     </div>

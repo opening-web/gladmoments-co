@@ -26,13 +26,15 @@ class HomeController extends Controller
         // Normalize promo fields to a predictable shape for the view
         if ($popupPromo) {
             $imagePath = $popupPromo->image_path ?? ($popupPromo->banner_image ?? null);
+            $bookingUrl = $popupPromo->cta_url ?: route('booking.index', ['promo_id' => $popupPromo->id]);
             $popupPromo = (object) [
+                'id' => $popupPromo->id,
                 'title' => $popupPromo->title,
                 'caption' => $popupPromo->caption ?? ($popupPromo->subtitle ?? null),
                 'image_path' => $imagePath,
                 'image_url' => $imagePath ? '/storage/' . ltrim($imagePath, '/') : null,
-                'cta_text' => $popupPromo->cta_text ?? ($popupPromo->button_text ?? 'Lihat Promo'),
-                'cta_url' => $popupPromo->cta_url ?? ($popupPromo->url ?? '#'),
+                'cta_text' => $popupPromo->cta_text ?? ($popupPromo->button_text ?? 'Booking Sekarang'),
+                'cta_url' => $bookingUrl,
                 'cta_target' => $popupPromo->cta_target ?? '_self',
                 'priority' => $popupPromo->priority ?? 0,
             ];
@@ -45,22 +47,25 @@ class HomeController extends Controller
             if (! $schedule->service || ! $schedule->date) {
                 continue;
             }
+
+            $status = strtolower(trim($schedule->status ?? ''));
+            if (! in_array($status, ['booked', 'maintenance'], true)) {
+                continue;
+            }
+
             $date = \Carbon\Carbon::parse($schedule->date);
             $monthIndex = (int) $date->format('n'); // 1..12
             $day = (int) $date->format('j');
             $slug = $schedule->service->slug;
+            $calendarKey = str_replace('-', '', $slug);
 
-            if (! isset($bookedCalendar[$slug])) {
-                $bookedCalendar[$slug] = [];
+            if (! isset($bookedCalendar[$calendarKey])) {
+                $bookedCalendar[$calendarKey] = [];
             }
-            if (! isset($bookedCalendar[$slug][$monthIndex])) {
-                $bookedCalendar[$slug][$monthIndex] = [];
+            if (! isset($bookedCalendar[$calendarKey][$monthIndex])) {
+                $bookedCalendar[$calendarKey][$monthIndex] = [];
             }
-            if (! in_array($day, $bookedCalendar[$slug][$monthIndex], true)
-                && in_array($schedule->status, ['Booked', 'Maintenance'], true)
-            ) {
-                $bookedCalendar[$slug][$monthIndex][] = $day;
-            }
+            $bookedCalendar[$calendarKey][$monthIndex][$day] = $status;
         }
 
         return view('pages.home', [
@@ -81,22 +86,25 @@ class HomeController extends Controller
             if (! $schedule->service || ! $schedule->date) {
                 continue;
             }
+
+            $status = strtolower(trim($schedule->status ?? ''));
+            if (! in_array($status, ['booked', 'maintenance'], true)) {
+                continue;
+            }
+
             $date = \Carbon\Carbon::parse($schedule->date);
             $monthIndex = (int) $date->format('n'); // 1..12
             $day = (int) $date->format('j');
             $slug = $schedule->service->slug;
+            $calendarKey = str_replace('-', '', $slug);
 
-            if (! isset($bookedCalendar[$slug])) {
-                $bookedCalendar[$slug] = [];
+            if (! isset($bookedCalendar[$calendarKey])) {
+                $bookedCalendar[$calendarKey] = [];
             }
-            if (! isset($bookedCalendar[$slug][$monthIndex])) {
-                $bookedCalendar[$slug][$monthIndex] = [];
+            if (! isset($bookedCalendar[$calendarKey][$monthIndex])) {
+                $bookedCalendar[$calendarKey][$monthIndex] = [];
             }
-            if (! in_array($day, $bookedCalendar[$slug][$monthIndex], true)
-                && in_array($schedule->status, ['Booked', 'Maintenance'], true)
-            ) {
-                $bookedCalendar[$slug][$monthIndex][] = $day;
-            }
+            $bookedCalendar[$calendarKey][$monthIndex][$day] = $status;
         }
 
         return response()->json($bookedCalendar);

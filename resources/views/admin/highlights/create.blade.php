@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="card shadow-sm border-0 p-4">
-    <h4 class="mb-4">Tambah Highlight Baru</h4>
+    <h4 class="mb-4">Tambah Footage Highlight Baru</h4>
     <form action="{{ route('admin.highlights.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         @if(session('success'))
@@ -22,22 +22,9 @@
             <input type="text" name="title" class="form-control" value="{{ old('title') }}" required>
         </div>
         <div class="mb-3">
-            <label class="form-label">Kategori</label>
-            <select name="category" class="form-control">
-                <option value="" {{ old('category') === '' ? 'selected' : '' }}>Pilih kategori</option>
-                <option value="wedding" {{ old('category') === 'wedding' ? 'selected' : '' }}>Wedding</option>
-                <option value="photobooth" {{ old('category') === 'photobooth' ? 'selected' : '' }}>Photobooth</option>
-                <option value="birthday" {{ old('category') === 'birthday' ? 'selected' : '' }}>Birthday</option>
-                <option value="brand" {{ old('category') === 'brand' ? 'selected' : '' }}>Brand</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Caption (boleh pakai &lt;br/&gt;)</label>
-            <textarea name="caption" class="form-control" rows="3">{{ old('caption') }}</textarea>
-        </div>
-        <div class="mb-3">
             <label class="form-label">Gambar</label>
-            <input type="file" name="image" class="form-control" required>
+            <input type="file" name="image" id="image" class="form-control" required accept="image/*">
+            <img id="imagePreview" src="" alt="Preview Gambar" class="mt-2 rounded d-none" width="120">
         </div>
         <div class="form-check mb-3">
             <input type="hidden" name="is_active" value="0">
@@ -49,5 +36,31 @@
         <button type="submit" class="btn btn-dark">Simpan</button>
     </form>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const imageInput = document.getElementById('image');
+        const imagePreview = document.getElementById('imagePreview');
+
+        if (!imageInput || !imagePreview) {
+            return;
+        }
+
+        imageInput.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (!file) {
+                imagePreview.src = '';
+                imagePreview.classList.add('d-none');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                imagePreview.src = event.target.result;
+                imagePreview.classList.remove('d-none');
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+</script>
 @endsection
 

@@ -15,7 +15,7 @@
                 <select name="service_id" class="form-select" required>
                     <option value="">-- Pilih Layanan --</option>
                     @foreach($services as $service)
-                        <option value="{{ $service->id }}">{{ $service->name }}</option>
+                        <option value="{{ $service->id }}" {{ old('service_id') == $service->id ? 'selected' : '' }}>{{ $service->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -23,26 +23,24 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label fw-semibold">Tanggal</label>
-                    <input type="date" name="date" class="form-control" required>
+                        <input type="date" name="date" class="form-control" value="{{ old('date') }}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Waktu</label>
+                        <input type="time" name="time" class="form-control" value="{{ old('time') }}" required>
+                    </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-semibold">Waktu</label>
-                    <input type="time" name="time" class="form-control" required>
-                </div>
-            </div>
 
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Lokasi</label>
-                <input type="text" name="location" class="form-control" placeholder="Contoh: Studio Utama / Outdoor" required>
-            </div>
-
-            <div class="mb-3">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Lokasi</label>
+                    <input type="text" name="location" class="form-control" placeholder="Contoh: Studio Utama / Outdoor" value="{{ old('location') }}" required>
                 <label class="form-label fw-semibold">Status</label>
                 <select name="status" class="form-select" required>
-                    <option value="Available">Available</option>
-                    <option value="Booked">Booked</option>
-                    <option value="Maintenance">Maintenance</option>
+                    <option value="Available" {{ old('status') === 'Available' ? 'selected' : '' }}>Available</option>
+                    <option value="Booked" {{ old('status') === 'Booked' ? 'selected' : '' }}>Booked</option>
+                    <option value="Maintenance" {{ old('status') === 'Maintenance' ? 'selected' : '' }}>Maintenance</option>
                 </select>
+                <div class="form-text">Pilih "Booked" untuk menandai jadwal sebagai sudah terisi. Tanggal ini akan muncul sebagai tidak tersedia di kalender ketersediaan depan.</div>
             </div>
 
             <div class="d-flex justify-content-end gap-2">
