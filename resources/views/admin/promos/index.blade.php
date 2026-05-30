@@ -15,17 +15,18 @@
     @endif
 
     <div class="card shadow-sm border-0 p-4">
-        <table class="table align-middle">
-            <thead>
-                <tr>
-                    <th>Gambar</th>
-                    <th>Judul</th>
-                    <th>Aktif</th>
-                    <th>Prioritas</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Gambar</th>
+                        <th>Judul</th>
+                        <th>Aktif</th>
+                        <th>Prioritas</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
                 @forelse($promos as $promo)
                     <tr>
                         <td>
@@ -33,7 +34,7 @@
                                 <img src="{{ $promo->image_url }}" width="100" class="rounded">
                             @endif
                         </td>
-                        <td>
+                        <td style="white-space: normal; max-width: 260px;">
                             <strong>{{ $promo->title }}</strong>
                             @if($promo->cta_url)
                                 <div class="text-muted" style="font-size:.85rem;">URL: {{ $promo->cta_url }}</div>

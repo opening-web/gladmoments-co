@@ -226,7 +226,28 @@
             color: #F3E5CC;
         }
         .shadow-sm { box-shadow: 0 12px 28px rgba(49, 40, 33, 0.08) !important; }
-        .table-responsive { border-radius: 22px; overflow: hidden; }
+        .table-responsive {
+            border-radius: 22px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+        .table-responsive::-webkit-scrollbar {
+            height: 9px;
+        }
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: rgba(34, 34, 34, 0.2);
+            border-radius: 99px;
+        }
+        .table th,
+        .table td {
+            min-width: 110px;
+            white-space: nowrap;
+        }
+        .table td img {
+            max-width: 100%;
+            height: auto;
+        }
         .btn-logout-sidebar {
             display: inline-flex;
             align-items: center;
@@ -283,9 +304,30 @@
             .main-content { margin-left: 240px; padding: 30px; }
         }
         @media (max-width: 860px) {
-            .sidebar { position: relative; width: 100%; height: auto; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
-            .main-content { margin-left: 0; padding: 24px; }
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid rgba(255,255,255,0.08);
+                box-shadow: none;
+                padding: 22px 18px 20px;
+            }
+            .main-content { margin-left: 0; padding: 24px 18px 32px; }
             .nav-link-admin { justify-content: flex-start; }
+            .btn-logout-sidebar { width: 100%; }
+        }
+        @media (max-width: 640px) {
+            .sidebar { padding: 18px 14px 18px; }
+            .main-content { padding: 18px 14px 28px; }
+            .nav-link-admin {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+                border-radius: 12px;
+            }
+            .brand-logo { font-size: 20px; margin-bottom: 18px; }
+            .page-header { gap: 12px; }
+            .page-header h2 { font-size: clamp(1.6rem, 5vw, 2.3rem); }
         }
     </style>
 </head>

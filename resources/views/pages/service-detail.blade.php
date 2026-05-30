@@ -14,7 +14,7 @@
         <p>{{ $service->description }}</p>
         <div class="hero-btns">
             <a class="btn-primary" href="https://wa.me/6287788991305?text={{ $waText }}">Hubungi Sekarang</a>
-            <a class="btn-outline" href="{{ route('services.index') }}">Kembali ke Layanan</a>
+            <a class="btn-outline" href="{{ route('home') }}">Kembali ke Home</a>
         </div>
     </div>
 </section>

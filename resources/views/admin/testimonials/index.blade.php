@@ -15,23 +15,24 @@
     @endif
 
     <div class="card shadow-sm border-0 p-4">
-        <table class="table align-middle">
-            <thead>
-                <tr>
-                    <th>Nama</th>
-                    <th>Event</th>
-                    <th>Pesan</th>
-                    <th>Rating</th>
-                    <th>Aktif</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Nama</th>
+                        <th>Event</th>
+                        <th>Pesan</th>
+                        <th>Rating</th>
+                        <th>Aktif</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
                 @forelse($testimonials as $item)
                     <tr>
                         <td>{{ $item->name }}</td>
                         <td>{{ $item->event }}</td>
-                        <td>{{ Str::limit($item->message, 80) }}</td>
+                        <td style="white-space: normal; max-width: 320px;">{{ Str::limit($item->message, 80) }}</td>
                         <td>{{ $item->rating }}/5</td>
                         <td>
                             <span class="badge {{ $item->is_active ? 'bg-success' : 'bg-secondary' }}">
