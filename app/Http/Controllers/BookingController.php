@@ -148,11 +148,11 @@ class BookingController extends Controller
             'event_date' => $validated['event_date'],
             'event_time' => $validated['event_time'] ?? $validated['event_start_time'] ?? '—',
             'event_name' => $validated['event_title'] ?? $validated['event_name'] ?? null,
-            'event_location' => $validated['venue_maps'] ?? $validated['venue_address'] ?? null,
+            'event_location' => $validated['venue_maps'] ?? $validated['venue_address'] ?? $validated['event_address'] ?? null,
             'total_price' => $totalPrice,
             'down_payment' => $downPayment,
             'form_details' => $formDetails,
-            'notes' => $validated['referral_source'] ?? null,
+            'notes' => $validated['referral_source'] ?? $validated['special_notes'] ?? null,
             'status' => 'pending',
         ]);
 
@@ -332,46 +332,34 @@ class BookingController extends Controller
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
             'customer_phone' => ['required', 'regex:/^[0-9]+$/', 'max:20'],
-            
-            // Bride data
             'bride_full_name' => 'required|string|max:255',
             'bride_nickname' => 'required|string|max:255',
             'bride_father_name' => 'required|string|max:255',
             'bride_mother_name' => 'required|string|max:255',
             'bride_child_order' => 'required|integer|min:1',
             'bride_photo' => 'required|file|mimes:jpg,jpeg,png|max:5120',
-            
-            // Groom data
             'groom_full_name' => 'required|string|max:255',
             'groom_nickname' => 'required|string|max:255',
             'groom_father_name' => 'required|string|max:255',
             'groom_mother_name' => 'required|string|max:255',
             'groom_child_order' => 'required|integer|min:1',
             'groom_photo' => 'required|file|mimes:jpg,jpeg,png|max:5120',
-            
-            // Event data
             'event_date' => 'required|date|after_or_equal:today',
             'event_day' => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
             'event_start_time' => 'required|string|max:10',
             'event_end_time' => 'required|string|max:10',
             'event_venue_name' => 'required|string|max:255',
             'event_address' => 'required|string|max:1000',
-            
-            // Media & Content
             'couple_photos' => 'required|array|min:1|max:14',
             'couple_photos.*' => 'file|mimes:jpg,jpeg,png|max:5120',
             'opening_quote' => 'required|string|max:1000',
-            
-            // Package & Notes
             'package_choice' => ['required', Rule::in($packages)],
             'special_notes' => 'nullable|string|max:1000',
         ]);
 
-        // Store file uploads
         $data['bride_photo'] = $request->file('bride_photo')->store('booking-uploads', 'public');
         $data['groom_photo'] = $request->file('groom_photo')->store('booking-uploads', 'public');
         
-        // Store couple photos
         $couplePhotos = [];
         if ($request->hasFile('couple_photos')) {
             foreach ($request->file('couple_photos') as $photo) {
@@ -380,7 +368,6 @@ class BookingController extends Controller
         }
         $data['couple_photos'] = $couplePhotos;
 
-        // Set event_time and event_name for consistency with other booking types
         $data['event_time'] = $data['event_start_time'];
         $data['event_name'] = $data['event_venue_name'];
         $data['event_title'] = 'Digital Invitation - ' . $data['bride_full_name'] . ' & ' . $data['groom_full_name'];
