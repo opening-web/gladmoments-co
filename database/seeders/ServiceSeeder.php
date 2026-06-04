@@ -10,7 +10,7 @@ class ServiceSeeder extends Seeder
     public function run(): void
     {
         $gladtocall = Service::create([
-            'name' => 'Glad to Call',
+            'name' => 'Audio Guestbook', 
             'slug' => 'gladtocall',
             'description' => 'Audio guestbook berkonsep telepon retro, menghadirkan pengalaman nostalgia dan interaksi tamu yang tak terlupakan.',
             'icon' => '🎙️',
