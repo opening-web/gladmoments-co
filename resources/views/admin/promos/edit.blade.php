@@ -33,10 +33,6 @@
                     <option value="_blank" {{ old('cta_target', $promo->cta_target) === '_blank' ? 'selected' : '' }}>Tab baru</option>
                 </select>
             </div>
-            <div class="col">
-                <label class="form-label">Prioritas</label>
-                <input type="number" name="priority" class="form-control" min="0" value="{{ old('priority', $promo->priority) }}">
-            </div>
         </div>
         <div class="mb-3">
             <label class="form-label">Gambar Baru (opsional)</label>

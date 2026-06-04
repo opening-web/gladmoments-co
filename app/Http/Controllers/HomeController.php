@@ -41,8 +41,30 @@ class HomeController extends Controller
         }
         $testimonials = Testimonial::where('is_active', true)->latest()->take(3)->get();
 
+        // Define a vibrant color palette for services - more distinct colors
+        $colorPalette = [
+            '#E74C3C',  // Bright Red
+            '#3498DB',  // Bright Blue
+            '#2ECC71',  // Bright Green
+            '#F39C12',  // Bright Orange
+            '#9B59B6',  // Bright Purple
+            '#E91E63',  // Hot Pink
+            '#00BCD4',  // Cyan
+            '#FF5722',  // Deep Orange
+        ];
+
+        // Get all services and assign colors
+        $serviceColors = [];
+        $serviceIndex = 0;
+        foreach ($services as $slug => $service) {
+            $serviceColors[$slug] = $colorPalette[$serviceIndex % count($colorPalette)];
+            $serviceIndex++;
+        }
+
         $schedules = Schedule::with('service')->get();
         $bookedCalendar = [];
+        $serviceInfo = [];
+        
         foreach ($schedules as $schedule) {
             if (! $schedule->service || ! $schedule->date) {
                 continue;
@@ -59,13 +81,31 @@ class HomeController extends Controller
             $slug = $schedule->service->slug;
             $calendarKey = str_replace('-', '', $slug);
 
-            if (! isset($bookedCalendar[$calendarKey])) {
-                $bookedCalendar[$calendarKey] = [];
+            // Get color from palette
+            $color = $serviceColors[$slug] ?? '#B39467';
+
+            // Store service info (name and color)
+            if (! isset($serviceInfo[$calendarKey])) {
+                $serviceInfo[$calendarKey] = [
+                    'name' => $schedule->service->name,
+                    'color' => $color,
+                ];
             }
-            if (! isset($bookedCalendar[$calendarKey][$monthIndex])) {
-                $bookedCalendar[$calendarKey][$monthIndex] = [];
+
+            // Store booked dates with service info
+            if (! isset($bookedCalendar[$monthIndex])) {
+                $bookedCalendar[$monthIndex] = [];
             }
-            $bookedCalendar[$calendarKey][$monthIndex][$day] = $status;
+            if (! isset($bookedCalendar[$monthIndex][$day])) {
+                $bookedCalendar[$monthIndex][$day] = [];
+            }
+            
+            $bookedCalendar[$monthIndex][$day][] = [
+                'service' => $calendarKey,
+                'status' => $status,
+                'name' => $schedule->service->name,
+                'color' => $color,
+            ];
         }
 
         return view('pages.home', [
@@ -75,6 +115,8 @@ class HomeController extends Controller
             'popupPromo' => $popupPromo,
             'testimonials' => $testimonials,
             'bookedCalendar' => $bookedCalendar,
+            'serviceInfo' => $serviceInfo,
+            'serviceColors' => $serviceColors,
         ]);
     }
 

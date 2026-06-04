@@ -172,10 +172,10 @@
     }
 
     .btn-outline {
-        border: 1px solid rgba(176, 141, 87, 0.3);
-        color: #B08D57;
+        border: 2px solid #B08D57;
+        color: #B08D57 !important;
         padding: 0.9rem 2rem;
-        font-weight: 600;
+        font-weight: 700 !important;
         border-radius: 8px;
         text-decoration: none;
         transition: all 0.3s;
@@ -183,7 +183,8 @@
     }
 
     .btn-outline:hover {
-        background: rgba(176, 141, 87, 0.04);
+        background: #B08D57;
+        color: #FFFFFF !important;
     }
 
     @media (max-width: 992px) {

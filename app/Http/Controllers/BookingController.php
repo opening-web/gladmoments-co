@@ -23,7 +23,7 @@ class BookingController extends Controller
         }
 
         $preselectedType = $request->query('type', 'photobooth');
-        if (! in_array($preselectedType, ['photobooth', 'audio', 'bundle'], true)) {
+        if (! in_array($preselectedType, ['photobooth', 'audio', 'bundle', 'digital_invitation'], true)) {
             $preselectedType = 'photobooth';
         }
 
@@ -49,7 +49,7 @@ class BookingController extends Controller
             $formConfig['photobooth_package_details'] = config('booking-forms.photobooth_package_details');
         }
 
-        $audioService = Service::findBySlug('gladtocall');
+        $audioService = Service::where('name', 'Audio Guestbook')->first();
         if ($audioService && $audioService->packages->count() > 0) {
             $formConfig['audio_packages'] = $audioService->packages->mapWithKeys(function ($package) {
                 return [$package->name => $package->discounted_price ?? $package->price];
@@ -89,6 +89,26 @@ class BookingController extends Controller
             $formConfig['bundle_package_details'] = config('booking-forms.bundle_package_details');
         }
 
+        $digitalInvitationService = Service::where('slug', 'digital-invitation')->first();
+        if ($digitalInvitationService && $digitalInvitationService->packages->count() > 0) {
+            $formConfig['digital_invitation_packages'] = $digitalInvitationService->packages->mapWithKeys(function ($package) {
+                return [$package->name => $package->discounted_price ?? $package->price];
+            })->toArray();
+
+            $formConfig['digital_invitation_package_meta'] = $digitalInvitationService->packages->mapWithKeys(function ($package) {
+                return [$package->name => $this->buildPackageMeta($package)];
+            })->toArray();
+
+            $formConfig['digital_invitation_package_details'] = $digitalInvitationService->packages->mapWithKeys(function ($package) {
+                $description = trim($package->description ?? '');
+                $parts = $description === '' ? [] : preg_split('/\r?\n/', $description);
+                return [$package->name => $parts ?: [$description ?: 'Detail paket belum tersedia.']];
+            })->toArray();
+        } else {
+            $formConfig['digital_invitation_package_meta'] = $this->buildFallbackPackageMeta($formConfig['digital_invitation_packages']);
+            $formConfig['digital_invitation_package_details'] = config('booking-forms.digital_invitation_package_details');
+        }
+
         return view('pages.booking', [
             'preselectedType' => $preselectedType,
             'formConfig' => $formConfig,
@@ -104,6 +124,7 @@ class BookingController extends Controller
             'photobooth' => $this->validatePhotobooth($request),
             'audio' => $this->validateAudio($request),
             'bundle' => $this->validateBundle($request),
+            'digital_invitation' => $this->validateDigitalInvitation($request),
             default => abort(422, 'Jenis booking tidak valid.'),
         };
 
@@ -218,7 +239,7 @@ class BookingController extends Controller
 
     private function validateAudio(Request $request): array
     {
-        $audioService = Service::findBySlug('gladtocall');
+        $audioService = Service::where('name', 'Audio Guestbook')->first();
         if ($audioService && $audioService->packages->count() > 0) {
             $packages = $audioService->packages->pluck('name')->toArray();
         } else {
@@ -296,6 +317,77 @@ class BookingController extends Controller
         return $this->appendUpload($request, $data, 'signage');
     }
 
+    private function validateDigitalInvitation(Request $request): array
+    {
+        $digitalInvitationService = Service::where('name', 'Digital Invitation')->first();
+        if ($digitalInvitationService && $digitalInvitationService->packages->count() > 0) {
+            $packages = $digitalInvitationService->packages->pluck('name')->toArray();
+        } else {
+            $packages = array_keys(config('booking-forms.digital_invitation_packages'));
+        }
+
+        $data = $request->validate([
+            'booking_type' => 'required|in:digital_invitation',
+            'promo_id' => 'nullable|exists:promos,id',
+            'customer_name' => 'required|string|max:255',
+            'customer_email' => 'required|email|max:255',
+            'customer_phone' => ['required', 'regex:/^[0-9]+$/', 'max:20'],
+            
+            // Bride data
+            'bride_full_name' => 'required|string|max:255',
+            'bride_nickname' => 'required|string|max:255',
+            'bride_father_name' => 'required|string|max:255',
+            'bride_mother_name' => 'required|string|max:255',
+            'bride_child_order' => 'required|integer|min:1',
+            'bride_photo' => 'required|file|mimes:jpg,jpeg,png|max:5120',
+            
+            // Groom data
+            'groom_full_name' => 'required|string|max:255',
+            'groom_nickname' => 'required|string|max:255',
+            'groom_father_name' => 'required|string|max:255',
+            'groom_mother_name' => 'required|string|max:255',
+            'groom_child_order' => 'required|integer|min:1',
+            'groom_photo' => 'required|file|mimes:jpg,jpeg,png|max:5120',
+            
+            // Event data
+            'event_date' => 'required|date|after_or_equal:today',
+            'event_day' => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
+            'event_start_time' => 'required|string|max:10',
+            'event_end_time' => 'required|string|max:10',
+            'event_venue_name' => 'required|string|max:255',
+            'event_address' => 'required|string|max:1000',
+            
+            // Media & Content
+            'couple_photos' => 'required|array|min:1|max:14',
+            'couple_photos.*' => 'file|mimes:jpg,jpeg,png|max:5120',
+            'opening_quote' => 'required|string|max:1000',
+            
+            // Package & Notes
+            'package_choice' => ['required', Rule::in($packages)],
+            'special_notes' => 'nullable|string|max:1000',
+        ]);
+
+        // Store file uploads
+        $data['bride_photo'] = $request->file('bride_photo')->store('booking-uploads', 'public');
+        $data['groom_photo'] = $request->file('groom_photo')->store('booking-uploads', 'public');
+        
+        // Store couple photos
+        $couplePhotos = [];
+        if ($request->hasFile('couple_photos')) {
+            foreach ($request->file('couple_photos') as $photo) {
+                $couplePhotos[] = $photo->store('booking-uploads', 'public');
+            }
+        }
+        $data['couple_photos'] = $couplePhotos;
+
+        // Set event_time and event_name for consistency with other booking types
+        $data['event_time'] = $data['event_start_time'];
+        $data['event_name'] = $data['event_venue_name'];
+        $data['event_title'] = 'Digital Invitation - ' . $data['bride_full_name'] . ' & ' . $data['groom_full_name'];
+
+        return $data;
+    }
+
     private function buildPackageMeta($package): array
     {
         $originalPrice = (float) $package->price;
@@ -344,14 +436,15 @@ class BookingController extends Controller
             }
         }
 
-        $slug = match ($type) {
-            'photobooth' => 'glad-moments',
-            'audio' => 'gladtocall',
-            'bundle' => 'bundle',
-            default => 'glad-moments',
+        $serviceName = match ($type) {
+            'photobooth' => 'Glad Moments',
+            'audio' => 'Audio Guestbook',
+            'bundle' => 'Bundle PhotoBooth + Audio Guestbook',
+            'digital_invitation' => 'Digital Invitation',
+            default => 'Glad Moments',
         };
 
-        return Package::whereHas('service', fn ($q) => $q->whereIn('slug', Service::slugAliases($slug)))->value('id')
+        return Package::whereHas('service', fn ($q) => $q->where('name', $serviceName))->value('id')
             ?? Package::query()->value('id');
     }
 
@@ -381,6 +474,7 @@ class BookingController extends Controller
             'photobooth' => config("booking-forms.photobooth_packages.{$packageChoice}", 1500000),
             'audio' => config("booking-forms.audio_packages.{$packageChoice}", 2500000),
             'bundle' => config("booking-forms.bundle_packages.{$packageChoice}", 5800000),
+            'digital_invitation' => config("booking-forms.digital_invitation_packages.{$packageChoice}", 2000000),
             default => 1500000,
         };
     }

@@ -21,10 +21,11 @@
                 <a href="{{ route('admin.bookings.index', ['status' => 'approved']) }}" class="btn btn-sm {{ $status == 'approved' ? 'btn-success' : 'btn-outline-success' }}">Approved</a>
                 <a href="{{ route('admin.bookings.index', ['status' => 'rejected']) }}" class="btn btn-sm {{ $status == 'rejected' ? 'btn-danger' : 'btn-outline-danger' }}">Rejected</a>
             </div>
-            <form action="{{ route('admin.bookings.index') }}" method="GET" class="d-flex">
+            <form action="{{ route('admin.bookings.index') }}" method="GET" class="d-flex gap-2">
                 <input type="hidden" name="status" value="{{ $status }}">
-            <button type="submit" class="btn btn-sm btn-dark ms-1">Cari</button>
-        </form>
+                <input type="text" name="search" class="form-control form-control-sm" placeholder="Cari nama/telepon..." value="{{ $search ?? '' }}" style="max-width: 300px;">
+                <button type="submit" class="btn btn-sm btn-dark">Cari</button>
+            </form>
     </div>
 
     @if(session()->has('success'))

@@ -262,7 +262,7 @@
     <div class="hero-content">
         <span class="section-tag">{{ $service->icon }} {{ $service->name }}</span>
         <h1>{{ $service->name }}</h1>
-        <p>{{ $service->description }}</p>
+        <p>{!! nl2br(e($service->description)) !!}</p>
         <div class="hero-btns">
             <a class="btn-primary" href="https://wa.me/6287788991305?text={{ $waText }}">Hubungi Sekarang</a>
             <a class="btn-outline" href="{{ route('home') }}">Kembali ke Home</a>
@@ -274,7 +274,7 @@
     <div class="services-header section-center">
         <span class="section-tag">Detail Layanan</span>
         <h2 class="section-title">{{ $service->name }}</h2>
-        <p class="section-sub">{{ $service->description }}</p>
+        <p class="section-sub" style="white-space: pre-wrap;">{!! nl2br(e($service->description)) !!}</p>
     </div>
 
     <div class="detail-grid">
@@ -294,7 +294,7 @@
                                 Rp {{ number_format($package->price, 0, ',', '.') }}
                             @endif
                             @if($package->description)
-                                <br><span class="detail-text">{{ $package->description }}</span>
+                                <br><span class="detail-text" style="white-space: pre-wrap;">{!! nl2br(e($package->description)) !!}</span>
                             @endif
                         </li>
                     @endforeach

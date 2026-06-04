@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\AdminPromoController;
 use App\Http\Controllers\Admin\AdminTestimonialController;
 
 use App\Http\Controllers\Admin\AdminPackageController;
+use App\Http\Controllers\Admin\AdminBookingFormController;
 
 Route::get('/storage/{path}', function ($path) {
     $disk = Storage::disk('public');
@@ -52,6 +53,7 @@ Route::prefix('admin')->as('admin.')->group(function () {
         
         Route::resource('services', AdminServiceController::class);
         Route::resource('packages', AdminPackageController::class);
+        Route::resource('booking-forms', AdminBookingFormController::class);
         Route::resource('schedules', AdminScheduleController::class);
         Route::resource('portfolios', AdminPortfolioController::class);
         Route::resource('highlights', AdminHighlightController::class);

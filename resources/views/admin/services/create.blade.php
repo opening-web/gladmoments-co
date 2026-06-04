@@ -23,7 +23,8 @@
 
             <div class="mb-3">
                 <label class="form-label fw-semibold">Deskripsi</label>
-                <textarea name="description" class="form-control" rows="5" placeholder="Tulis detail deskripsi layanan di sini..." required>{{ old('description') }}</textarea>
+                <textarea name="description" class="form-control" rows="8" placeholder="Tulis detail deskripsi layanan di sini..." required style="white-space: pre-wrap; font-family: 'Courier New', monospace;">{{ old('description') }}</textarea>
+                <small class="text-muted d-block mt-2">💡 Bisa gunakan line break untuk bullet points. Contoh:<br/>Gear:<br/>• Camera canon EOS R100<br/>• Ipad pro</small>
             </div>
 
             <div class="mb-3">

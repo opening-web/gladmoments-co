@@ -78,6 +78,11 @@ class AdminBookingController extends Controller
             return Service::whereIn('slug', array_merge(Service::slugAliases('gladtocall'), ['gladmoments']))->pluck('id')->filter()->values()->all();
         }
 
+        if ($booking->booking_type === 'digital_invitation') {
+            $service = Service::where('slug', 'digital-invitation')->first();
+            return $service ? [$service->id] : [];
+        }
+
         if ($booking->package && $booking->package->service_id) {
             return [$booking->package->service_id];
         }

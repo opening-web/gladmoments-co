@@ -35,61 +35,91 @@ function filterPortfolio(btn,cat){
 }
 
 const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-const bookedDates = window.bookedDates || {
-  gladtocall: {},
-  gladmoments: {}
-};
 const now = new Date();
-let calYear = { gladtocall: now.getFullYear(), gladmoments: now.getFullYear() };
-let calMonth = { gladtocall: now.getMonth(), gladmoments: now.getMonth() };
+let calYear = now.getFullYear();
+let calMonth = now.getMonth();
 
-function renderCalendar(service) {
-  const grid = document.getElementById('calGrid-' + service);
-  const label = document.getElementById('calMonth-' + service);
+function renderCalendar() {
+  const grid = document.getElementById('calGrid');
+  const label = document.getElementById('calMonth');
   if (!grid || !label) return;
 
-  label.textContent = months[calMonth[service]] + ' ' + calYear[service];
+  // Use window.bookedCalendar directly so it picks up injected data
+  const bookedCalendar = window.bookedCalendar || {};
+
+  label.textContent = months[calMonth] + ' ' + calYear;
   grid.innerHTML = '';
   const days = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
   days.forEach(d => {
     const el = document.createElement('div');
-    el.className = 'cal-day-label'; el.textContent = d;
+    el.className = 'cal-day-label';
+    el.textContent = d;
     grid.appendChild(el);
   });
-  const firstDay = new Date(calYear[service], calMonth[service], 1).getDay();
-  const totalDays = new Date(calYear[service], calMonth[service] + 1, 0).getDate();
+  
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const totalDays = new Date(calYear, calMonth + 1, 0).getDate();
   const today = new Date();
-  const booked = (bookedDates[service] && bookedDates[service][calMonth[service] + 1]) || {};
+  const monthIndex = calMonth + 1; // 1-based month for lookup
+  
+  // Add empty cells for days before the first day of the month
   for (let i = 0; i < firstDay; i++) {
-    const el = document.createElement('div'); el.className = 'cal-day empty'; grid.appendChild(el);
-  }
-  for (let d = 1; d <= totalDays; d++) {
     const el = document.createElement('div');
-    el.textContent = d;
-    let cls = 'cal-day';
-    const dayStatus = booked[d];
-    if (dayStatus === 'maintenance') cls += ' maintenance';
-    else if (dayStatus === 'booked') cls += ' booked';
-    else cls += ' available';
-    if (d === today.getDate() && calMonth[service] === today.getMonth() && calYear[service] === today.getFullYear()) cls += ' today';
-    if (dayStatus) {
-      el.dataset.status = dayStatus;
-      el.title = dayStatus === 'maintenance' ? 'Jadwal maintenance' : 'Sudah dipesan';
-    }
-    el.className = cls;
+    el.className = 'cal-day empty';
     grid.appendChild(el);
   }
-}
-function changeMonthService(dir, service) {
-  calMonth[service] += dir;
-  if (calMonth[service] < 0) { calMonth[service] = 11; calYear[service]--; }
-  if (calMonth[service] > 11) { calMonth[service] = 0; calYear[service]++; }
-  renderCalendar(service);
+  
+  // Add day cells
+  for (let d = 1; d <= totalDays; d++) {
+    const dayCell = document.createElement('div');
+    dayCell.className = 'cal-day';
+    dayCell.textContent = d;
+    
+    let isToday = d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
+    if (isToday) dayCell.classList.add('today');
+    
+    // Check if there are any bookings for this day
+    const dayBookings = bookedCalendar[monthIndex] && bookedCalendar[monthIndex][d] ? bookedCalendar[monthIndex][d] : [];
+    
+    if (dayBookings.length > 0) {
+      dayCell.classList.add('has-bookings');
+      
+      // Create service indicators
+      const indicatorsContainer = document.createElement('div');
+      indicatorsContainer.className = 'service-indicators';
+      
+      dayBookings.forEach((booking, idx) => {
+        const indicator = document.createElement('div');
+        indicator.className = 'service-indicator';
+        indicator.style.backgroundColor = booking.color;
+        indicator.title = booking.name + ' - ' + (booking.status === 'maintenance' ? 'Maintenance' : 'Booked');
+        indicatorsContainer.appendChild(indicator);
+      });
+      
+      dayCell.appendChild(indicatorsContainer);
+    } else {
+      dayCell.classList.add('available');
+    }
+    
+    grid.appendChild(dayCell);
+  }
 }
 
-// Initial render for both services
-renderCalendar('gladtocall');
-renderCalendar('gladmoments');
+function changeMonth(dir) {
+  calMonth += dir;
+  if (calMonth < 0) {
+    calMonth = 11;
+    calYear--;
+  }
+  if (calMonth > 11) {
+    calMonth = 0;
+    calYear++;
+  }
+  renderCalendar();
+}
+
+// Initial render
+renderCalendar();
 
 // ==========================================================================
 // GLOBAL LIQUID-GRADIENT PAGE TRANSITION OVERLAY HANDLER

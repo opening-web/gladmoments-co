@@ -60,7 +60,7 @@
         .nav-link-admin {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-start;
             gap: 10px;
             padding: 12px 14px;
             border-radius: 14px;

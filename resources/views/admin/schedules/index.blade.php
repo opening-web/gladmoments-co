@@ -39,9 +39,9 @@
                         <tr>
                             <td class="px-4 text-muted">{{ $index + 1 }}</td>
                             <td class="fw-bold">{{ $schedule->service->name }}</td>
-                            <td>{{ $schedule->date }}</td>
+                            <td>{{ \Carbon\Carbon::parse($schedule->date)->format('d/m/Y') }}</td>
                             <td>{{ $schedule->time }}</td>
-                            <td>{{ $schedule->location }}</td>
+                            <td>{{ $schedule->location ?? '-' }}</td>
                             <td>
                                 <span class="badge {{ $schedule->status == 'Available' ? 'bg-success' : ($schedule->status == 'Booked' ? 'bg-warning' : 'bg-danger') }}">
                                     {{ $schedule->status }}

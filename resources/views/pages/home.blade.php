@@ -764,9 +764,9 @@
         }
         .avail-grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: 1fr;
             gap: 2rem !important;
-            max-width: 1000px;
+            max-width: 700px;
             margin: 0 auto;
             width: 100%;
         }
@@ -804,7 +804,7 @@
             font-weight: 600;
         }
         .footer-col ul li a {
-            color: rgba(255, 255, 255, 0.5) !important;
+            color: rgba(255, 255, 255, 0.85) !important;
             transition: color 0.3s;
         }
         .footer-col ul li a:hover {
@@ -1027,11 +1027,12 @@
                             <img class="service-card-img" src="{{ $imageUrl }}" alt="{{ $service->name }}">
                         </div>
                         <div class="service-card-content">
-                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-                                <span style="font-size: 1.5rem;">{{ $service->icon ?? ($service->slug === 'gladtocall' ? '🎙️' : '📸') }}</span>
-                                <h3 style="margin: 0; font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 600; color: var(--dark-color);">{{ $service->name }}</h3>
+                            <div style="margin-bottom: 0.75rem;">
+                                <h3 style="margin: 0 0 0.5rem 0; font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 600; color: var(--dark-color);">{{ $service->name }}</h3>
+                                @if($service->price > 0)
+                                    <p style="margin: 0; font-size: 1.1rem; font-weight: 600; color: var(--accent-color);">Mulai dari Rp {{ number_format($service->price, 0, ',', '.') }}</p>
+                                @endif
                             </div>
-                            <p style="font-size: 0.9rem; color: #555; line-height: 1.7; margin-bottom: 1.5rem;">{{ $service->description }}</p>
                             <span class="service-card-cta">Lihat Selengkapnya <span class="arrow">→</span></span>
                         </div>
                     </a>
@@ -1060,7 +1061,6 @@
                     return str_contains($cat, 'photobooth') || str_contains($cat, 'photoboothevent');
                 })->values();
             @endphp
-
             @if($filteredHighlights->count())
                 <div class="highlight-hero">
                     <div class="highlight-slider" id="highlightSlider">
@@ -1139,29 +1139,24 @@
         
         <div class="avail-grid-container">
             <div class="calendar-wrap">
-                <h3 style="font-family:'Playfair Display',serif;font-weight:600;color:var(--accent-color);margin-bottom:1.5rem;font-size:1.25rem;">Glad to Call</h3>
+                <h3 style="font-family:'Playfair Display',serif;font-weight:600;color:var(--accent-color);margin-bottom:1.5rem;font-size:1.25rem;">Ketersediaan Layanan</h3>
                 <div class="cal-header">
-                    <button class="cal-nav" onclick="changeMonthService(-1, 'gladtocall')">←</button>
-                    <div class="cal-month" id="calMonth-gladtocall">Juni 2025</div>
-                    <button class="cal-nav" onclick="changeMonthService(1, 'gladtocall')">→</button>
+                    <button class="cal-nav" onclick="changeMonth(-1)">←</button>
+                    <div class="cal-month" id="calMonth">Juni 2025</div>
+                    <button class="cal-nav" onclick="changeMonth(1)">→</button>
                 </div>
-                <div class="cal-grid" id="calGrid-gladtocall"></div>
-            </div>
-
-            <div class="calendar-wrap">
-                <h3 style="font-family:'Playfair Display',serif;font-weight:600;color:var(--accent-color);margin-bottom:1.5rem;font-size:1.25rem;">Glad Moments</h3>
-                <div class="cal-header">
-                    <button class="cal-nav" onclick="changeMonthService(-1, 'gladmoments')">←</button>
-                    <div class="cal-month" id="calMonth-gladmoments">Juni 2025</div>
-                    <button class="cal-nav" onclick="changeMonthService(1, 'gladmoments')">→</button>
-                </div>
-                <div class="cal-grid" id="calGrid-gladmoments"></div>
+                <div class="cal-grid" id="calGrid"></div>
             </div>
         </div>
 
         <div class="cal-legend" style="margin-top:2rem;">
             <div class="leg-item"><div class="leg-dot available"></div> Tersedia</div>
-            <div class="leg-item"><div class="leg-dot booked"></div> Sudah Dipesan</div>
+            @foreach($serviceInfo as $key => $service)
+                <div class="leg-item">
+                    <div class="leg-dot" style="background-color: {{ $service['color'] }}; border: 1px solid {{ $service['color'] }};"></div>
+                    {{ $service['name'] }} - Booked
+                </div>
+            @endforeach
             <div class="leg-item"><div class="leg-dot today-d"></div> Hari Ini</div>
         </div>
         <br/><br/>
@@ -1239,7 +1234,8 @@
     @endif
 
     <script>
-        window.bookedDates = @json($bookedCalendar ?? []);
+        window.bookedCalendar = @json($bookedCalendar ?? []);
+        window.serviceInfo = @json($serviceInfo ?? []);
     </script>
     <script src="{{ asset('js/index.js') }}"></script>
     <script>

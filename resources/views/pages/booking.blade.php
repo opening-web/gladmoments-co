@@ -329,6 +329,9 @@
             <a href="{{ route('booking.index', array_filter(['type' => 'bundle', 'promo_id' => $promo->id ?? null])) }}" class="booking-tab {{ $preselectedType === 'bundle' ? 'active' : '' }}">
                 ✨ Bundle
             </a>
+            <a href="{{ route('booking.index', array_filter(['type' => 'digital_invitation', 'promo_id' => $promo->id ?? null])) }}" class="booking-tab {{ $preselectedType === 'digital_invitation' ? 'active' : '' }}">
+                💌 Digital Invitation
+            </a>
         </div>
 
         @if ($errors->any())
@@ -346,6 +349,8 @@
             @include('pages.booking.partials.photobooth')
         @elseif($preselectedType === 'audio')
             @include('pages.booking.partials.audio')
+        @elseif($preselectedType === 'digital_invitation')
+            @include('pages.booking.partials.digital-invitation')
         @else
             @include('pages.booking.partials.bundle')
         @endif

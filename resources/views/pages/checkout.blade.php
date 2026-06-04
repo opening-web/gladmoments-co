@@ -1,8 +1,66 @@
 @extends('layouts.app')
-
 @section('styles')
 <style>
-    /* Checkout Specific Theme Variable Overrides */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+@media (max-width: 992px) {
+    .co-grid, .si-hero-grid, .si-services-split, .detail-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+    }
+    .si-hero-image-wrap {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    .co-body {
+        padding-top: 6rem;
+    }
+}
+@media (max-width: 768px) {
+    nav {
+        padding: 1rem 1.5rem !important;
+    }
+    .booking-type-tabs, .hero-btns {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0 1rem;
+    }
+    .booking-tab, .btn-primary, .btn-outline {
+        width: 100%;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+    .co-card, .co-summary-aside, .si-service-section-card, .success-card {
+        padding: 1.5rem !important;
+    }
+    .si-body {
+        padding-top: 5rem;
+    }
+    .si-faq-trigger {
+        padding: 1rem !important;
+        font-size: 1rem;
+    }
+    .portfolio-filters {
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    .filter-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+    .bio-links {
+        padding: 0 1rem;
+    }
+    .bio-link-card, .service-detail, .detail-list li {
+        padding: 1rem !important;
+    }
+}
+</style>
+<style>
     :root {
         --checkout-primary: #B08D57;
         --checkout-primary-hover: #8a6b3f;
@@ -12,7 +70,6 @@
         --checkout-text: #2A2A2A;
         --checkout-text-muted: #6C6C6C;
     }
-
     .co-body {
         background-color: var(--checkout-bg);
         color: var(--checkout-text);
@@ -21,526 +78,276 @@
         min-height: 100vh;
         padding-top: 8rem;
     }
-
     .co-bg-pattern {
         position: absolute;
         inset: 0;
         background-image: 
-            radial-gradient(ellipse 50% 40% at 50% -10%, rgba(176, 141, 87, 0.08) 0%, transparent 60%),
-            radial-gradient(ellipse 40% 40% at 80% 80%, rgba(251, 45, 90, 0.04) 0%, transparent 50%);
-        z-index: 0;
+            radial-gradient(ellipse 50% 40% at 50% -10%, rgba(176, 141, 87, 0.08) 0%, transparent 60%),\n            radial-gradient(ellipse 40% 40% at 80% 80%, rgba(251, 45, 90, 0.04) 0%, transparent 50%);
+        z-index: 1;
         pointer-events: none;
     }
-
-    /* Minimalist Navbar for Checkout */
-    nav {
-        background: rgba(255, 255, 255, 0.96) !important;
-        backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(176, 141, 87, 0.12) !important;
-        padding: 1.1rem 4rem !important;
-        position: fixed !important;
-        top: 0; left: 0; right: 0;
-        z-index: 1000;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-    }
-    .nav-logo a {
-        color: #1A1206 !important;
-        font-family: 'Playfair Display', serif;
-        font-weight: 700;
-        font-size: 1.3rem;
-    }
-    .nav-back a {
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: var(--checkout-primary) !important;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        transition: color 0.3s;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        text-decoration: none;
-    }
-    .nav-back a:hover {
-        color: var(--checkout-primary-hover) !important;
-    }
-    @media(max-width: 640px) {
-        nav {
-            padding: 1.1rem 1.5rem !important;
-        }
-        .nav-logo a {
-            font-size: 1.1rem;
-        }
-        .nav-back a {
-            font-size: 0.72rem;
-        }
-    }
-
-    /* Page Header */
-    .co-header {
-        text-align: center;
-        margin-bottom: 4rem;
-        padding: 0 1.5rem;
+    .co-container {
         position: relative;
-        z-index: 1;
+        z-index: 2;
+        max-width: 1140px;
+        margin: 0 auto;
+        padding: 0 1.5rem 5rem;
     }
-    .co-header span {
-        font-size: 0.72rem;
-        letter-spacing: 0.25em;
-        text-transform: uppercase;
-        color: var(--checkout-primary);
-        font-weight: 600;
-        margin-bottom: 0.6rem;
-        display: block;
+    .co-header {
+        margin-bottom: 3rem;
     }
     .co-header h1 {
         font-family: 'Playfair Display', serif;
-        font-size: 2.5rem;
-        font-weight: 600;
-        color: var(--checkout-text);
+        font-size: 2.2rem;
+        color: #1A1206;
+        margin-bottom: 0.5rem;
     }
-
-    /* Grid Layout Split */
     .co-grid {
         display: grid;
-        grid-template-columns: 1.3fr 1fr;
-        gap: 3rem;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 2rem 6rem;
-        position: relative;
-        z-index: 1;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 2.5rem;
+        align-items: start;
     }
-    @media(max-width: 960px) {
-        .co-grid {
-            grid-template-columns: 1fr;
-            gap: 2.5rem;
-        }
-    }
-
-    /* Left Payment Section */
-    .co-main-flow {
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-    }
-
-    /* Step Cards */
-    .co-step-card {
+    .co-card {
         background: var(--checkout-card-bg);
-        border-radius: 24px;
-        border: 1px solid rgba(176, 141, 87, 0.12);
-        padding: 3rem;
-        box-shadow: 0 12px 40px rgba(176, 141, 87, 0.03);
-        position: relative;
+        border-radius: 16px;
+        padding: 2.5rem;
+        border: 1px solid rgba(176, 141, 87, 0.08);
+        box-shadow: 0 10px 35px rgba(26, 18, 6, 0.02);
+        margin-bottom: 2rem;
     }
-    @media(max-width: 640px) {
-        .co-step-card {
-            padding: 2rem 1.5rem;
-        }
-    }
-    .co-step-num {
-        position: absolute;
-        top: -16px;
-        left: 32px;
-        background: var(--checkout-primary);
-        color: #FFFFFF;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        font-size: 0.85rem;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 10px rgba(176, 141, 87, 0.3);
-    }
-    .co-step-card h3 {
+    .co-card-title {
         font-family: 'Playfair Display', serif;
         font-size: 1.35rem;
-        color: var(--checkout-text);
-        margin-bottom: 1.25rem;
-        font-weight: 600;
-    }
-
-    /* Bank Account Display Card */
-    .co-bank-display {
-        background: linear-gradient(135deg, #1A1206 0%, #2A1D0B 100%);
-        border-radius: 20px;
-        padding: 2rem;
-        color: #FFFFFF;
-        position: relative;
-        overflow: hidden;
-        border: 1px solid rgba(242, 178, 102, 0.15);
-        box-shadow: 0 15px 30px rgba(26, 18, 6, 0.15);
+        color: #1A1206;
         margin-bottom: 1.5rem;
-    }
-    .co-bank-display::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at top right, rgba(176, 141, 87, 0.25) 0%, transparent 60%);
-    }
-    .co-bank-logo {
-        font-size: 0.72rem;
-        letter-spacing: 0.15em;
-        text-transform: uppercase;
-        color: var(--checkout-primary);
-        font-weight: 700;
-        margin-bottom: 1.5rem;
-    }
-    .co-bank-number-row {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        gap: 0.75rem;
+    }
+    .co-bank-box {
+        background: #FDFBF7;
+        border: 1px dashed rgba(176, 141, 87, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
         margin-bottom: 1.5rem;
     }
-    .co-bank-number {
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 1.8rem;
-        font-weight: 700;
-        letter-spacing: 0.05em;
-        color: #FDFBF7;
+    .co-bank-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
     }
-    @media(max-width: 480px) {
-        .co-bank-number {
-            font-size: 1.4rem;
-        }
+    .co-bank-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--checkout-primary);
+        letter-spacing: 0.05em;
+    }
+    .co-account-num {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #1A1206;
+        letter-spacing: 0.02em;
+        margin-bottom: 0.25rem;
+    }
+    .co-account-holder {
+        font-size: 0.9rem;
+        color: var(--checkout-text-muted);
     }
     .co-copy-btn {
-        background: rgba(176, 141, 87, 0.15);
-        border: 1px solid rgba(176, 141, 87, 0.3);
+        background: transparent;
+        border: 1px solid rgba(176, 141, 87, 0.4);
         color: var(--checkout-primary);
-        padding: 0.45rem 1rem;
-        border-radius: 8px;
-        font-size: 0.75rem;
-        font-weight: 600;
+        padding: 0.4rem 1rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.2s;
     }
     .co-copy-btn:hover {
         background: var(--checkout-primary);
-        color: #FFFFFF;
-        border-color: var(--checkout-primary);
+        color: #fff;
     }
-    .co-bank-holder {
-        font-size: 0.88rem;
-        color: rgba(255,255,255,0.7);
-    }
-    .co-bank-holder strong {
-        color: #FFFFFF;
-        display: block;
-        font-size: 1.05rem;
-        margin-top: 0.2rem;
-    }
-
-    /* Uploader Dropzone */
     .co-dropzone {
-        border: 2px dashed rgba(176, 141, 87, 0.3);
-        background: var(--checkout-bg);
-        border-radius: 16px;
-        padding: 3rem 2rem;
+        border: 2px dashed rgba(176, 141, 87, 0.25);
+        background: #FDFBF7;
+        border-radius: 12px;
+        padding: 2.5rem 1.5rem;
         text-align: center;
         cursor: pointer;
         transition: all 0.3s;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
+        position: relative;
     }
     .co-dropzone:hover {
-        border-color: var(--checkout-accent);
-        background: rgba(251, 45, 90, 0.02);
+        border-color: var(--checkout-primary);
+        background: rgba(176, 141, 87, 0.02);
     }
-    .co-upload-icon {
-        font-size: 3rem;
+    .co-dropzone-icon {
         color: var(--checkout-primary);
-        line-height: 1;
-        transition: transform 0.3s;
+        margin-bottom: 0.75rem;
     }
-    .co-dropzone:hover .co-upload-icon {
-        transform: translateY(-4px);
-        color: var(--checkout-accent);
-    }
-    .co-dropzone input {
-        display: none;
-    }
-    .co-dropzone span {
+    .co-dropzone-text {
         font-size: 0.9rem;
-        color: var(--checkout-text);
-        font-weight: 600;
-    }
-    .co-dropzone p {
-        font-size: 0.78rem;
-        color: var(--checkout-text-muted);
-        margin: 0;
-    }
-    .co-filename-badge {
-        display: none;
-        background: rgba(176, 141, 87, 0.1);
-        border: 1px solid rgba(176, 141, 87, 0.2);
-        color: var(--checkout-primary);
-        padding: 0.45rem 1rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
         font-weight: 500;
+        color: #1A1206;
+    }
+    .co-dropzone-hint {
+        font-size: 0.8rem;
+        color: var(--checkout-text-muted);
+        margin-top: 0.25rem;
+    }
+    .co-file-input {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
+    .co-file-badge {
+        display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        word-break: break-all;
+        background: rgba(37, 211, 102, 0.1);
+        color: #128C7E;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-top: 1rem;
     }
-
-    .co-submit-btn {
-        background: var(--checkout-accent);
-        color: #FFFFFF;
-        width: 100%;
-        border: none;
-        padding: 1.1rem;
-        border-radius: 14px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        cursor: pointer;
-        transition: all 0.3s;
-        box-shadow: 0 6px 20px rgba(251, 45, 90, 0.2);
+    .co-summary-aside {
+        background: var(--checkout-card-bg);
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1px solid rgba(176, 141, 87, 0.08);
+        box-shadow: 0 10px 35px rgba(26, 18, 6, 0.02);
+        position: sticky;
+        top: 7.5rem;
     }
-    .co-submit-btn:hover {
-        background: #D61B44;
-        transform: translateY(-2px);
-        box-shadow: 0 10px 24px rgba(251, 45, 90, 0.3);
-    }
-
-    /* Right Checkout Summary Sidebar */
-    .co-sidebar {
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-    }
-    .co-summary-card {
-        background: #FFFFFF;
-        border-radius: 24px;
-        border: 1px solid rgba(176, 141, 87, 0.12);
-        padding: 2.5rem;
-        box-shadow: 0 12px 40px rgba(176, 141, 87, 0.03);
-    }
-    .co-summary-card h3 {
+    .co-summary-title {
         font-family: 'Playfair Display', serif;
-        font-size: 1.35rem;
-        color: var(--checkout-text);
-        margin-bottom: 1.8rem;
-        border-bottom: 1px solid rgba(176, 141, 87, 0.15);
-        padding-bottom: 0.75rem;
+        font-size: 1.2rem;
+        color: #1A1206;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(176, 141, 87, 0.1);
+        margin-bottom: 1.25rem;
     }
     .co-summary-row {
         display: flex;
         justify-content: space-between;
-        padding: 0.85rem 0;
-        border-bottom: 1px solid rgba(0,0,0,0.03);
         font-size: 0.9rem;
+        margin-bottom: 0.75rem;
     }
-    .co-summary-row:last-of-type {
-        border-bottom: none;
+    .co-summary-row.co-total {
+        border-top: 1px solid rgba(176, 141, 87, 0.1);
+        padding-top: 1rem;
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
     }
-    .co-summary-label {
-        color: var(--checkout-text-muted);
-    }
-    .co-summary-val {
-        color: var(--checkout-text);
+    .co-summary-row.co-total span:last-child {
+        font-size: 1.3rem;
         font-weight: 600;
-        text-align: right;
+        color: #1A1206;
     }
-    .co-summary-total-box {
-        background: var(--checkout-bg);
-        border-radius: 16px;
-        padding: 1.5rem;
-        margin-top: 1.5rem;
-        border: 1px solid rgba(176, 141, 87, 0.08);
-    }
-    .co-total-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .co-total-label {
+    .co-btn-submit {
+        width: 100%;
+        background: var(--checkout-primary);
+        color: #FFFFFF;
+        border: none;
+        padding: 0.9rem;
         font-size: 0.95rem;
-        font-weight: 700;
-        color: var(--checkout-text);
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(176, 141, 87, 0.15);
     }
-    .co-total-val {
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: var(--checkout-accent);
-    }
-    .co-total-note {
-        font-size: 0.78rem;
-        color: var(--checkout-text-muted);
-        text-align: center;
-        margin-top: 0.85rem;
-        line-height: 1.5;
-    }
-
-    /* Alert Styling */
-    .co-alert {
-        background: #FEF2F2;
-        border: 1px solid #FECACA;
-        border-radius: 12px;
-        padding: 1.25rem;
-        color: #991B1B;
-        font-size: 0.85rem;
-        margin-bottom: 2rem;
-    }
-    .co-alert ul {
-        margin: 0.5rem 0 0 1.2rem;
+    .co-btn-submit:hover {
+        background: var(--checkout-primary-hover);
     }
 </style>
 @endsection
-
-@section('navbar')
-<nav id="navbar">
-    <div class="nav-logo">
-        <a href="{{ route('home') }}">Glad Moments & Co</a>
-    </div>
-    <div class="nav-back">
-        <a href="{{ route('home') }}">
-            ← Kembali ke Home
-        </a>
-    </div>
-</nav>
-@endsection
-
 @section('content')
 <div class="co-body">
     <div class="co-bg-pattern"></div>
-
-    <header class="co-header">
-        <span>Payment Gateway</span>
-        <h1>Penyelesaian Booking</h1>
-    </header>
-
-    <div class="co-grid">
-        <!-- Left Payment Flow -->
-        <div class="co-main-flow">
-            @if ($errors->any())
-                <div class="co-alert">
-                    <strong>Mohon koreksi data berikut:</strong>
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <!-- Step 1: Transfer -->
-            <div class="co-step-card">
-                <div class="co-step-num">1</div>
-                <h3>Lakukan Transfer Uang Muka (DP)</h3>
-                
-                <div class="co-bank-display">
-                    <div class="co-bank-logo">Corporate Virtual Card</div>
-                    
-                    <div class="co-bank-number-row">
-                        <span class="co-bank-number" id="bankNumber">{{ $bank['account_number'] }}</span>
-                        <button class="co-copy-btn" onclick="copyNumber()">Salin No. Rekening</button>
-                    </div>
-
-                    <div class="co-bank-holder">
-                        Bank Penerima
-                        <strong>{{ $bank['bank_name'] }}</strong>
-                        <div style="margin-top:0.85rem;">Nama Pemilik Rekening</div>
-                        <strong>a.n. {{ $bank['account_name'] }}</strong>
+    <div class="co-container">
+        <div class="co-header">
+            <span style="font-size:0.8rem; font-weight:600; color:var(--checkout-primary); text-transform:uppercase; letter-spacing:0.05em;">Langkah Terakhir</span>
+            <h1>Verifikasi &amp; Pembayaran DP</h1>
+        </div>
+        <div class="co-grid">
+            <main>
+                <div class="co-card">
+                    <h2 class="co-card-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--checkout-primary);"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                        Rekening Pembayaran Resmi
+                    </h2>
+                    <p style="font-size:0.9rem; color:var(--checkout-text-muted); margin-bottom:1.5rem; line-height:1.5;">Silakan transfer pembayaran Down Payment (DP) ke rekening bank berwenang di bawah ini sebesar nominal yang tertera pada ikhtisar ringkasan.</p>
+                    <div class="co-bank-box">
+                        <div class="co-bank-header">
+                            <span class="co-bank-name">BANK CENTRAL ASIA</span>
+                            <button type="button" class="co-copy-btn" onclick="copyNumber()">Salin No. Rekening</button>
+                        </div>
+                        <div class="co-account-num" id="bankNumber">5271819201</div>
+                        <div class="co-account-holder">a.n. Glad Moments &amp; Co</div>
                     </div>
                 </div>
-
-                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(176,141,87,0.06); padding:1rem 1.5rem; border-radius:12px; border:1px solid rgba(176,141,87,0.12);">
-                    <span style="font-size:0.88rem; color:var(--checkout-text-muted); font-weight:500;">Nominal Transfer DP:</span>
-                    <strong style="font-size:1.15rem; color:var(--checkout-accent); font-weight:700;">Rp {{ number_format($downPayment, 0, ',', '.') }}</strong>
-                </div>
-                <p style="font-size:0.78rem; color:var(--checkout-text-muted); text-align:center; margin-top:0.85rem; line-height:1.5;">
-                    💡 Mohon cantumkan nama pemesan <strong>({{ $booking->customer_name }})</strong> pada kolom berita acara transfer.
-                </p>
-            </div>
-
-            <!-- Step 2: Upload -->
-            <div class="co-step-card">
-                <div class="co-step-num">2</div>
-                <h3>Unggah Bukti Transfer</h3>
-                
                 <form action="{{ route('booking.pay', $booking) }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    
-                    <div class="form-group" style="margin-bottom:1.5rem;">
-                        <label class="co-dropzone" id="dropzone">
-                            <input type="file" name="payment_proof" id="paymentProof" accept="image/*" required onchange="handleFileSelected()">
-                            <div class="co-upload-icon">📤</div>
-                            <span id="dropzoneText">Pilih File Bukti Pembayaran</span>
-                            <p>Mendukung format JPG, JPEG, PNG hingga ukuran maksimal 5MB</p>
-                            
-                            <div class="co-filename-badge" id="fileBadge">
-                                📄 <span id="fileName">Namafile.png</span>
+                    <div class="co-card">
+                        <h2 class="co-card-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--checkout-primary);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            Unggah Bukti Transfer
+                        </h2>
+                        <div class="co-dropzone">
+                            <div class="co-dropzone-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
                             </div>
-                        </label>
+                            <span class="co-dropzone-text" id="dropzoneText">Pilih berkas struk atau screenshot bukti transfer</span>
+                            <p class="co-dropzone-hint">Format yang didukung: JPG, PNG, PDF (Maks. 5MB)</p>
+                            <input type="file" name="payment_proof" id="paymentProof" class="co-file-input" required onchange="handleFileSelected()">
+                        </div>
+                        <div class="co-file-badge" id="fileBadge" style="display: none;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span id="fileName"></span>
+                        </div>
+                        @error('payment_proof')
+                            <p style="color:var(--checkout-accent); font-size:0.85rem; margin-top:0.5rem;">{{ $message }}</p>
+                        @enderror
                     </div>
-
-                    <button type="submit" class="co-submit-btn">Kirim Bukti &amp; Selesaikan Booking</button>
-                </form>
-            </div>
+            </main>
+            <aside>
+                <div class="co-summary-aside">
+                    <h3 class="co-summary-title">Ringkasan Pesanan</h3>
+                    <div class="co-summary-row">
+                        <span style="color:var(--checkout-text-muted);">Nama Layanan</span>
+                        <span style="font-weight:500;">{{ $booking->package->name ?? $booking->package_choice ?? 'Layanan' }}</span>
+                    </div>
+                    <div class="co-summary-row">
+                        <span style="color:var(--checkout-text-muted);">Tanggal Acara</span>
+                        <span style="font-weight:500;">{{ $booking->event_date?->format('d M Y') ?? '-' }}</span>
+                    </div>
+                    <div class="co-summary-row">
+                        <span style="color:var(--checkout-text-muted);">Waktu Operasional</span>
+                        <span style="font-weight:500;">{{ $booking->event_time ?? '-' }}</span>
+                    </div>
+                    <div class="co-summary-row">
+                        <span style="color:var(--checkout-text-muted);">Total Harga</span>
+                        <span style="font-weight:500;">Rp {{ number_format((float) $booking->total_price, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="co-summary-row co-total">
+                        <span style="font-weight:500; color:#1A1206;">Wajib Bayar DP</span>
+                        <span>Rp {{ number_format((float) $downPayment, 0, ',', '.') }}</span>
+                    </div>
+                    <button type="submit" class="co-btn-submit">Selesaikan &amp; Konfirmasi</button>
+                </div>
+            </aside>
+            </form>
         </div>
-
-        <!-- Right Summary Sidebar -->
-        <aside class="co-sidebar">
-            <div class="co-summary-card">
-                <h3>Ringkasan Booking</h3>
-                
-                <div class="co-summary-row">
-                    <span class="co-summary-label">Nama Pemesan</span>
-                    <span class="co-summary-val">{{ $booking->customer_name }}</span>
-                </div>
-                <div class="co-summary-row">
-                    <span class="co-summary-label">Layanan</span>
-                    <span class="co-summary-val" style="color:var(--checkout-primary); text-transform:uppercase;">
-                        @if($booking->booking_type === 'photobooth') PhotoBooth Only
-                        @elseif($booking->booking_type === 'audio') Audio Guestbook Only
-                        @else Bundle @endif
-                    </span>
-                </div>
-                @if($booking->package_choice)
-                <div class="co-summary-row">
-                    <span class="co-summary-label">Pilihan Paket</span>
-                    <span class="co-summary-val">{{ $booking->package_choice }}</span>
-                </div>
-                @endif
-                <div class="co-summary-row">
-                    <span class="co-summary-label">Nama Acara</span>
-                    <span class="co-summary-val">{{ $booking->event_name ?? '—' }}</span>
-                </div>
-                <div class="co-summary-row">
-                    <span class="co-summary-label">Tanggal Acara</span>
-                    <span class="co-summary-val">{{ $booking->event_date->translatedFormat('d F Y') }}</span>
-                </div>
-                <div class="co-summary-row">
-                    <span class="co-summary-label">Waktu Acara</span>
-                    <span class="co-summary-val">{{ $booking->event_time }}</span>
-                </div>
-
-                <div class="co-summary-total-box">
-                    <div class="co-total-row">
-                        <span class="co-total-label">Down Payment (DP)</span>
-                        <span class="co-total-val">Rp {{ number_format($downPayment, 0, ',', '.') }}</span>
-                    </div>
-                    <div class="co-total-note">
-                        Estimasi Total Investasi: Rp {{ number_format($booking->total_price, 0, ',', '.') }}<br>
-                        Sisa pelunasan wajib dibayarkan maksimal H-5 acara.
-                    </div>
-                </div>
-            </div>
-        </aside>
     </div>
 </div>
 @endsection
-
 @section('scripts')
 <script>
     function copyNumber() {
@@ -559,13 +366,11 @@
             }, 2000);
         });
     }
-
     function handleFileSelected() {
         const fileInput = document.getElementById('paymentProof');
         const badge = document.getElementById('fileBadge');
         const nameSpan = document.getElementById('fileName');
         const textSpan = document.getElementById('dropzoneText');
-        
         if (fileInput.files.length > 0) {
             const file = fileInput.files[0];
             nameSpan.innerText = file.name;
@@ -573,9 +378,7 @@
             textSpan.innerText = 'Ganti File Pilihan';
         } else {
             badge.style.display = 'none';
-            textSpan.innerText = 'Pilih File Bukti Pembayaran';
         }
     }
 </script>
 @endsection
-
