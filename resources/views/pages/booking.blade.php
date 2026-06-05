@@ -253,6 +253,85 @@
         color: #FB2D5A;
     }
 
+    .jotform-style input[type="text"],
+    .jotform-style input[type="tel"],
+    .jotform-style input[type="email"],
+    .jotform-style input[type="date"],
+    .jotform-style input[type="time"],
+    .jotform-style textarea,
+    .jotform-style select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        font-family: 'Poppins', sans-serif;
+        color: #2A2A2A;
+        background: #FDFBF7;
+        border: 1px solid rgba(176, 141, 87, 0.2);
+        border-radius: 8px;
+        transition: all 0.3s;
+        box-sizing: border-box;
+    }
+
+    .jotform-style input:focus,
+    .jotform-style textarea:focus,
+    .jotform-style select:focus {
+        outline: none;
+        border-color: #B08D57;
+        background: #FFFFFF;
+        box-shadow: 0 0 0 3px rgba(176, 141, 87, 0.1);
+    }
+
+    .jotform-style select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23B08D57' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/\%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: calc(100% - 1rem) center;
+        padding-right: 2.5rem;
+    }
+
+    .form-submit-bar {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(176, 141, 87, 0.1);
+    }
+
+    .dp-note {
+        font-size: 0.9rem;
+        color: #6C6C6C;
+        margin-bottom: 1rem;
+    }
+
+    .btn-primary.btn-block {
+        width: 100%;
+        background: #B08D57;
+        color: #FFFFFF;
+        border: none;
+        padding: 0.9rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(176, 141, 87, 0.2);
+    }
+
+    .btn-primary.btn-block:hover {
+        background: #8a6b3f;
+        box-shadow: 0 6px 16px rgba(176, 141, 87, 0.3);
+    }
+
+    .field-hint {
+        display: block;
+        margin-top: 0.4rem;
+        font-size: 0.8rem;
+        color: #8b8b8b;
+    }
+
+    .field-hint a {
+        color: #B08D57;
+        text-decoration: none;
+    }
+
     @media (max-width: 992px) {
         nav {
             padding: 1rem 2rem !important;
@@ -313,7 +392,7 @@
         @if(isset($promo) && $promo)
             <div class="promo-badge-container">
                 <div class="promo-applied-badge">
-                    <span>🎁 Promo Aktif: <strong>{{ $promo->name }}</strong> (Potongan Rp {{ number_format($promo->discount_value, 0, ',', '.') }})</span>
+                    <span>🎁 Promo Aktif: <strong>{{ $promo->name }}</strong> (Potongan Rp {{ number_format($promo->discount_value ?? 0, 0, ',', '.') }})</span>
                     <button type="button" class="promo-remove-btn" onclick="window.location.href='{{ route('booking.index', ['type' => $preselectedType]) }}'" title="Hapus Promo">×</button>
                 </div>
             </div>
@@ -345,15 +424,17 @@
             </div>
         @endif
 
-        @if($preselectedType === 'photobooth')
-            @include('pages.booking.partials.photobooth')
-        @elseif($preselectedType === 'audio')
-            @include('pages.booking.partials.audio')
-        @elseif($preselectedType === 'digital_invitation')
-            @include('pages.booking.partials.digital-invitation')
-        @else
-            @include('pages.booking.partials.bundle')
-        @endif
+        <div class="booking-card">
+            @if($preselectedType === 'photobooth')
+                @include('pages.booking.partials.photobooth')
+            @elseif($preselectedType === 'audio')
+                @include('pages.booking.partials.audio')
+            @elseif($preselectedType === 'digital_invitation')
+                @include('pages.booking.partials.digital-invitation')
+            @else
+                @include('pages.booking.partials.bundle')
+            @endif
+        </div>
     </div>
 </div>
 @endsection
