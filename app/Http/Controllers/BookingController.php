@@ -2,467 +2,161 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
-use App\Models\Package;
-use App\Models\Payment;
-use App\Models\Promo;
-use App\Models\Schedule;
-use App\Models\Service;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use App\Models\Booking;
+use App\Models\Promo;
+use App\Models\Package;
+use App\Models\Service;
 
 class BookingController extends Controller
 {
-    public function index(Request $request)
+    public function create(Request $request)
     {
-        $promoId = $request->query('promo_id');
         $promo = null;
-
-        if ($promoId) {
-            $promo = Promo::find($promoId);
+        if ($request->has('promo_code')) {
+            $promo = Promo::where('code', $request->promo_code)
+                ->where('is_active', true)
+                ->first();
         }
 
-        $preselectedType = $request->query('type', 'photobooth');
-        if (! in_array($preselectedType, ['photobooth', 'audio', 'bundle', 'digital_invitation'], true)) {
-            $preselectedType = 'photobooth';
+        $audioService = Service::where('name', 'like', '%Audio%')->first();
+        $serviceId = $audioService ? $audioService->id : 3;
+
+        $packages = Package::where('service_id', $serviceId)->get();
+
+        $audioPackages = [];
+        $audioPackageDetails = [];
+        $audioPackageMeta = [];
+
+        foreach ($packages as $package) {
+            $originalPrice = $package->price;
+            $finalPrice = $originalPrice;
+            $hasDiscount = false;
+            $promoPercent = 0;
+            $savings = 0;
+
+            if ($promo) {
+                if ($promo->type === 'percentage') {
+                    $promoPercent = $promo->value;
+                    $savings = ($originalPrice * $promoPercent) / 100;
+                    $finalPrice = $originalPrice - $savings;
+                    $hasDiscount = true;
+                } elseif ($promo->type === 'fixed') {
+                    $savings = $promo->value;
+                    $finalPrice = max(0, $originalPrice - $savings);
+                    $promoPercent = $originalPrice > 0 ? round(($savings / $originalPrice) * 100) : 0;
+                    $hasDiscount = true;
+                }
+            }
+
+            $audioPackages[$package->id] = $finalPrice;
+
+            $audioPackageDetails[$package->id] = [
+                'name' => $package->name,
+                'points' => explode("\n", $package->description)
+            ];
+
+            $audioPackageMeta[$package->id] = [
+                'price' => $originalPrice,
+                'has_discount' => $hasDiscount,
+                'promo_percent' => $promoPercent,
+                'savings' => $savings
+            ];
         }
 
-        $formConfig = config('booking-forms');
+        $formConfig = [
+            'audio_packages' => $audioPackages,
+            'audio_package_details' => $audioPackageDetails,
+            'audio_package_meta' => $audioPackageMeta,
+            'tablecloth_options' => ['Putih Polos', 'Maron', 'Renda Klasik', 'Tanpa Taplak'],
+            'speaker_options' => ['Hitam Klasik', 'Rose Gold', 'Putih Minimalis'],
+            'referral_sources' => ['Instagram', 'TikTok', 'Bridestory', 'Teman/Keluarga', 'Lainnya']
+        ];
 
-        $photoboothService = Service::where('slug', 'glad-moments')->first();
-        if ($photoboothService && $photoboothService->packages->count() > 0) {
-            $formConfig['photobooth_packages'] = $photoboothService->packages->mapWithKeys(function ($package) {
-                return [$package->name => $package->discounted_price ?? $package->price];
-            })->toArray();
+        $downPaymentAmount = 500000;
+        $preselectedType = 'audio';
 
-            $formConfig['photobooth_package_meta'] = $photoboothService->packages->mapWithKeys(function ($package) {
-                return [$package->name => $this->buildPackageMeta($package)];
-            })->toArray();
-
-            $formConfig['photobooth_package_details'] = $photoboothService->packages->mapWithKeys(function ($package) {
-                $description = trim($package->description ?? '');
-                $parts = $description === '' ? [] : preg_split('/\r?\n/', $description);
-                return [$package->name => $parts ?: [$description ?: 'Detail paket belum tersedia.']];
-            })->toArray();
-        } else {
-            $formConfig['photobooth_package_meta'] = $this->buildFallbackPackageMeta($formConfig['photobooth_packages']);
-            $formConfig['photobooth_package_details'] = config('booking-forms.photobooth_package_details');
-        }
-
-        $audioService = Service::where('name', 'Audio Guestbook')->first();
-        if ($audioService && $audioService->packages->count() > 0) {
-            $formConfig['audio_packages'] = $audioService->packages->mapWithKeys(function ($package) {
-                return [$package->name => $package->discounted_price ?? $package->price];
-            })->toArray();
-
-            $formConfig['audio_package_meta'] = $audioService->packages->mapWithKeys(function ($package) {
-                return [$package->name => $this->buildPackageMeta($package)];
-            })->toArray();
-
-            $formConfig['audio_package_details'] = $audioService->packages->mapWithKeys(function ($package) {
-                $description = trim($package->description ?? '');
-                $parts = $description === '' ? [] : preg_split('/\r?\n/', $description);
-                return [$package->name => $parts ?: [$description ?: 'Detail paket belum tersedia.']];
-            })->toArray();
-        } else {
-            $formConfig['audio_package_meta'] = $this->buildFallbackPackageMeta($formConfig['audio_packages']);
-            $formConfig['audio_package_details'] = config('booking-forms.audio_packages_details');
-        }
-
-        $bundleService = Service::where('slug', 'bundle')->first();
-        if ($bundleService && $bundleService->packages->count() > 0) {
-            $formConfig['bundle_packages'] = $bundleService->packages->mapWithKeys(function ($package) {
-                return [$package->name => $package->discounted_price ?? $package->price];
-            })->toArray();
-
-            $formConfig['bundle_package_meta'] = $bundleService->packages->mapWithKeys(function ($package) {
-                return [$package->name => $this->buildPackageMeta($package)];
-            })->toArray();
-
-            $formConfig['bundle_package_details'] = $bundleService->packages->mapWithKeys(function ($package) {
-                $description = trim($package->description ?? '');
-                $parts = $description === '' ? [] : preg_split('/\r?\n/', $description);
-                return [$package->name => $parts ?: [$description ?: 'Detail paket belum tersedia.']];
-            })->toArray();
-        } else {
-            $formConfig['bundle_package_meta'] = $this->buildFallbackPackageMeta($formConfig['bundle_packages']);
-            $formConfig['bundle_package_details'] = config('booking-forms.bundle_package_details');
-        }
-
-        $digitalInvitationService = Service::where('slug', 'digital-invitation')->first();
-        if ($digitalInvitationService && $digitalInvitationService->packages->count() > 0) {
-            $formConfig['digital_invitation_packages'] = $digitalInvitationService->packages->mapWithKeys(function ($package) {
-                return [$package->name => $package->discounted_price ?? $package->price];
-            })->toArray();
-
-            $formConfig['digital_invitation_package_meta'] = $digitalInvitationService->packages->mapWithKeys(function ($package) {
-                return [$package->name => $this->buildPackageMeta($package)];
-            })->toArray();
-
-            $formConfig['digital_invitation_package_details'] = $digitalInvitationService->packages->mapWithKeys(function ($package) {
-                $description = trim($package->description ?? '');
-                $parts = $description === '' ? [] : preg_split('/\r?\n/', $description);
-                return [$package->name => $parts ?: [$description ?: 'Detail paket belum tersedia.']];
-            })->toArray();
-        } else {
-            $formConfig['digital_invitation_package_meta'] = $this->buildFallbackPackageMeta($formConfig['digital_invitation_packages']);
-            $formConfig['digital_invitation_package_details'] = config('booking-forms.digital_invitation_package_details');
-        }
-
-        return view('pages.booking', [
-            'preselectedType' => $preselectedType,
-            'formConfig' => $formConfig,
-            'downPaymentAmount' => config('booking.down_payment_amount'),
-            'promo' => $promo,
-        ]);
+        return view('booking', compact('formConfig', 'promo', 'downPaymentAmount', 'preselectedType'));
     }
 
     public function store(Request $request)
     {
-        $type = $request->input('booking_type');
-        $validated = match ($type) {
-            'photobooth' => $this->validatePhotobooth($request),
-            'audio' => $this->validateAudio($request),
-            'bundle' => $this->validateBundle($request),
-            'digital_invitation' => $this->validateDigitalInvitation($request),
-            default => abort(422, 'Jenis booking tidak valid.'),
-        };
-
-        $packageChoice = $validated['package_choice'] ?? 'Bundle PhotoBooth + Audio Guestbook';
-        $totalPrice = $this->resolvePrice($type, $packageChoice);
-        $downPayment = min($totalPrice, config('booking.down_payment_amount'));
-
-        $formDetails = collect($validated)
-            ->except(['booking_type', 'package_choice', 'customer_name', 'customer_email', 'customer_phone', 'event_date', 'event_time', 'event_name', 'event_title'])
-            ->all();
-
-        $this->ensureScheduleDateIsAvailable($validated['event_date']);
-
-        $booking = Booking::create([
-            'package_id' => $this->resolvePackageId($type, $packageChoice),
-            'package_choice' => $packageChoice,
-            'booking_type' => $type,
-            'customer_name' => $validated['customer_name'] ?? $validated['recipient_name'] ?? '—',
-            'customer_email' => $validated['customer_email'] ?? null,
-            'customer_phone' => $validated['customer_phone'] ?? $validated['recipient_phone'] ?? '—',
-            'event_date' => $validated['event_date'],
-            'event_time' => $validated['event_time'] ?? $validated['event_start_time'] ?? '—',
-            'event_name' => $validated['event_title'] ?? $validated['event_name'] ?? null,
-            'event_location' => $validated['venue_maps'] ?? $validated['venue_address'] ?? $validated['event_address'] ?? null,
-            'total_price' => $totalPrice,
-            'down_payment' => $downPayment,
-            'form_details' => $formDetails,
-            'notes' => $validated['referral_source'] ?? $validated['special_notes'] ?? null,
-            'status' => 'pending',
-        ]);
-
-        return redirect()->route('booking.checkout', $booking);
-    }
-
-    public function checkout(Booking $booking)
-    {
-        $hasPayment = $booking->payments()->exists();
-        if ($booking->status === 'pending' && $hasPayment) {
-            return redirect()->route('booking.success', $booking);
-        }
-
-        return view('pages.checkout', [
-            'booking' => $booking->load('package.service'),
-            'downPayment' => $booking->down_payment,
-            'bank' => config('booking.bank'),
-        ]);
-    }
-
-    public function pay(Request $request, Booking $booking)
-    {
-        if ($booking->payments()->exists()) {
-            return redirect()->route('booking.success', $booking);
-        }
-
         $request->validate([
-            'payment_proof' => 'required|image|max:5120',
-        ]);
-
-        $proofPath = $request->file('payment_proof')->store('payment-proofs', 'public');
-
-        Payment::create([
-            'booking_id' => $booking->id,
-            'amount' => $booking->down_payment,
-            'payment_method' => 'transfer',
-            'payment_proof' => $proofPath,
-            'status' => 'pending',
-        ]);
-
-        $booking->update(['status' => 'pending']);
-
-        return redirect()->route('booking.success', $booking);
-    }
-
-    public function success(Booking $booking)
-    {
-        return view('pages.booking-success', [
-            'booking' => $booking->load('package.service'),
-        ]);
-    }
-
-    private function validatePhotobooth(Request $request): array
-    {
-        $photoboothService = Service::where('slug', 'glad-moments')->first();
-        if ($photoboothService && $photoboothService->packages->count() > 0) {
-            $packages = $photoboothService->packages->pluck('name')->toArray();
-        } else {
-            $packages = array_keys(config('booking-forms.photobooth_packages'));
-        }
-
-        $data = $request->validate([
-            'booking_type' => 'required|in:photobooth',
-            'promo_id' => 'nullable|exists:promos,id',
-            'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
-            'event_title' => 'required|string|max:255',
-            'hashtag' => 'nullable|string|max:255',
-            'venue_maps' => 'required|string|max:500',
-            'event_date' => 'required|date|after_or_equal:today',
-            'event_start_time' => 'required|string|max:10',
-            'photobooth_start_time' => 'required|string|max:10',
-            'pic_name' => 'required|string|max:255',
-            'customer_phone' => ['required', 'regex:/^[0-9]+$/', 'max:20'],
-            'package_choice' => ['required', Rule::in($packages)],
-            'template_frame' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240',
-            'backdrop' => 'nullable|string|max:255',
-            'referral_source' => 'nullable|string|max:255',
-            'referral_other' => 'nullable|string|max:255',
-        ]);
-
-        return $this->appendUpload($request, $data, 'template_frame');
-    }
-
-    private function validateAudio(Request $request): array
-    {
-        $audioService = Service::where('name', 'Audio Guestbook')->first();
-        if ($audioService && $audioService->packages->count() > 0) {
-            $packages = $audioService->packages->pluck('name')->toArray();
-        } else {
-            $packages = array_keys(config('booking-forms.audio_packages'));
-        }
-
-        $data = $request->validate([
-            'booking_type' => 'required|in:audio',
-            'promo_id' => 'nullable|exists:promos,id',
+            'booking_type' => 'required|string',
             'recipient_name' => 'required|string|max:255',
-            'recipient_phone' => ['required', 'regex:/^[0-9]+$/', 'max:20'],
+            'recipient_phone' => 'required|string|max:20',
             'customer_email' => 'required|email|max:255',
-            'recipient_address' => 'nullable|string|max:500',
+            'recipient_address' => 'nullable|string',
             'customer_name' => 'nullable|string|max:255',
             'event_title' => 'required|string|max:255',
-            'venue_maps' => 'required|string|max:500',
+            'venue_maps' => 'required|string',
             'event_date' => 'required|date|after_or_equal:today',
-            'event_start_time' => 'required|string|max:10',
-            'event_end_time' => 'required|string|max:10',
-            'signage' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240',
+            'event_start_time' => 'required',
+            'event_end_time' => 'required',
+            'signage' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
             'pic_name' => 'required|string|max:255',
-            'customer_phone' => ['required', 'regex:/^[0-9]+$/', 'max:20'],
-            'package_choice' => ['required', Rule::in($packages)],
-            'tablecloth' => ['required', Rule::in(config('booking-forms.tablecloth_options'))],
+            'customer_phone' => 'required|string|max:20',
+            'package_choice' => 'required|exists:packages,id',
+            'tablecloth' => 'required|string',
             'decor_theme' => 'nullable|string|max:255',
-            'speaker_color' => 'nullable|string|max:50',
+            'speaker_color' => 'nullable|string|max:255',
             'referral_source' => 'nullable|string|max:255',
             'referral_other' => 'nullable|string|max:255',
-        ]);
-
-        if (empty($data['customer_name'])) {
-            $data['customer_name'] = $data['recipient_name'];
-        }
-
-        return $this->appendUpload($request, $data, 'signage');
-    }
-
-    private function validateBundle(Request $request): array
-    {
-        $bundleService = Service::where('slug', 'bundle')->first();
-        if ($bundleService && $bundleService->packages->count() > 0) {
-            $packages = $bundleService->packages->pluck('name')->toArray();
-        } else {
-            $packages = array_keys(config('booking-forms.bundle_packages'));
-        }
-
-        $data = $request->validate([
-            'booking_type' => 'required|in:bundle',
             'promo_id' => 'nullable|exists:promos,id',
-            'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
-            'venue_maps' => 'required|string|max:500',
-            'venue_address_2' => 'nullable|string|max:255',
-            'venue_city' => 'nullable|string|max:100',
-            'venue_state' => 'nullable|string|max:100',
-            'venue_postal' => 'nullable|string|max:20',
-            'event_title' => 'required|string|max:255',
-            'event_date' => 'required|date|after_or_equal:today',
-            'event_start_time' => 'required|string|max:10',
-            'photobooth_start_time' => 'required|string|max:10',
-            'photo_tone' => ['required', Rule::in(config('booking-forms.photo_tone'))],
-            'print_size' => ['required', Rule::in(config('booking-forms.print_sizes'))],
-            'guestbook_placement' => ['required', Rule::in(config('booking-forms.guestbook_placement'))],
-            'backdrop' => ['required', Rule::in(config('booking-forms.backdrop_options'))],
-            'tablecloth' => ['required', Rule::in(['Putih', 'Hitam'])],
-            'decor_theme' => 'required|string|max:255',
-            'signage' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:10240',
-            'pic_name' => 'required|string|max:255',
-            'customer_phone' => ['required', 'regex:/^[0-9]+$/', 'max:20'],
-            'package_choice' => ['required', Rule::in($packages)],
         ]);
 
-        $data['event_time'] = $data['event_start_time'];
+        $package = Package::findOrFail($request->package_choice);
+        $originalPrice = $package->price;
+        $finalPrice = $originalPrice;
 
-        return $this->appendUpload($request, $data, 'signage');
-    }
-
-    private function validateDigitalInvitation(Request $request): array
-    {
-        $digitalInvitationService = Service::where('name', 'Digital Invitation')->first();
-        if ($digitalInvitationService && $digitalInvitationService->packages->count() > 0) {
-            $packages = $digitalInvitationService->packages->pluck('name')->toArray();
-        } else {
-            $packages = array_keys(config('booking-forms.digital_invitation_packages'));
+        if ($request->filled('promo_id')) {
+            $promo = Promo::find($request->promo_id);
+            if ($promo && $promo->is_active) {
+                if ($promo->type === 'percentage') {
+                    $finalPrice = $originalPrice - (($originalPrice * $promo->value) / 100);
+                } elseif ($promo->type === 'fixed') {
+                    $finalPrice = max(0, $originalPrice - $promo->value);
+                }
+            }
         }
 
-        $data = $request->validate([
-            'booking_type' => 'required|in:digital_invitation',
-            'promo_id' => 'nullable|exists:promos,id',
-            'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
-            'customer_phone' => ['required', 'regex:/^[0-9]+$/', 'max:20'],
-            'bride_full_name' => 'required|string|max:255',
-            'bride_nickname' => 'required|string|max:255',
-            'bride_father_name' => 'required|string|max:255',
-            'bride_mother_name' => 'required|string|max:255',
-            'bride_child_order' => 'required|integer|min:1',
-            'bride_photo' => 'required|file|mimes:jpg,jpeg,png|max:5120',
-            'groom_full_name' => 'required|string|max:255',
-            'groom_nickname' => 'required|string|max:255',
-            'groom_father_name' => 'required|string|max:255',
-            'groom_mother_name' => 'required|string|max:255',
-            'groom_child_order' => 'required|integer|min:1',
-            'groom_photo' => 'required|file|mimes:jpg,jpeg,png|max:5120',
-            'event_date' => 'required|date|after_or_equal:today',
-            'event_day' => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
-            'event_start_time' => 'required|string|max:10',
-            'event_end_time' => 'required|string|max:10',
-            'event_venue_name' => 'required|string|max:255',
-            'event_address' => 'required|string|max:1000',
-            'couple_photos' => 'required|array|min:1|max:14',
-            'couple_photos.*' => 'file|mimes:jpg,jpeg,png|max:5120',
-            'opening_quote' => 'required|string|max:1000',
-            'package_choice' => ['required', Rule::in($packages)],
-            'special_notes' => 'nullable|string|max:1000',
-        ]);
-
-        $data['bride_photo'] = $request->file('bride_photo')->store('booking-uploads', 'public');
-        $data['groom_photo'] = $request->file('groom_photo')->store('booking-uploads', 'public');
+        $booking = new Booking();
+        $booking->booking_type = $request->booking_type;
+        $booking->recipient_name = $request->recipient_name;
+        $booking->recipient_phone = $request->recipient_phone;
+        $booking->customer_email = $request->customer_email;
+        $booking->recipient_address = $request->recipient_address;
+        $booking->customer_name = $request->customer_name ?? $request->recipient_name;
+        $booking->event_title = $request->event_title;
+        $booking->venue_maps = $request->venue_maps;
+        $booking->event_date = $request->event_date;
+        $booking->event_start_time = $request->event_start_time;
+        $booking->event_end_time = $request->event_end_time;
         
-        $couplePhotos = [];
-        if ($request->hasFile('couple_photos')) {
-            foreach ($request->file('couple_photos') as $photo) {
-                $couplePhotos[] = $photo->store('booking-uploads', 'public');
-            }
-        }
-        $data['couple_photos'] = $couplePhotos;
-
-        $data['event_time'] = $data['event_start_time'];
-        $data['event_name'] = $data['event_venue_name'];
-        $data['event_title'] = 'Digital Invitation - ' . $data['bride_full_name'] . ' & ' . $data['groom_full_name'];
-
-        return $data;
-    }
-
-    private function buildPackageMeta($package): array
-    {
-        $originalPrice = (float) $package->price;
-        $discountedPrice = $package->discounted_price !== null ? (float) $package->discounted_price : null;
-        $hasDiscount = $discountedPrice !== null && $discountedPrice < $originalPrice;
-
-        return [
-            'price' => $originalPrice,
-            'discounted_price' => $discountedPrice ?? $originalPrice,
-            'promo_percent' => $package->promo_percent ? (int) $package->promo_percent : 0,
-            'has_discount' => $hasDiscount,
-            'savings' => $hasDiscount ? round($originalPrice - $discountedPrice, 2) : 0,
-        ];
-    }
-
-    private function buildFallbackPackageMeta(array $packages): array
-    {
-        return collect($packages)->mapWithKeys(function ($price, $name) {
-            $originalPrice = (float) $price;
-
-            return [$name => [
-                'price' => $originalPrice,
-                'discounted_price' => $originalPrice,
-                'promo_percent' => 0,
-                'has_discount' => false,
-                'savings' => 0,
-            ]];
-        })->toArray();
-    }
-
-    private function appendUpload(Request $request, array $data, string $field): array
-    {
-        if ($request->hasFile($field)) {
-            $data[$field] = $request->file($field)->store('booking-uploads', 'public');
+        if ($request->hasFile('signage')) {
+            $path = $request->file('signage')->store('signages', 'public');
+            $booking->signage = $path;
         }
 
-        return $data;
-    }
-
-    private function resolvePackageId(string $type, ?string $packageChoice = null): int
-    {
-        if ($packageChoice) {
-            $package = Package::where('name', $packageChoice)->first();
-            if ($package) {
-                return $package->id;
-            }
+        $booking->pic_name = $request->pic_name;
+        $booking->customer_phone = $request->customer_phone;
+        $booking->package_id = $package->id;
+        $booking->package_name = $package->name;
+        $booking->total_price = $finalPrice;
+        $booking->tablecloth = $request->tablecloth;
+        $booking->decor_theme = $request->decor_theme;
+        $booking->speaker_color = $request->speaker_color;
+        
+        if ($request->referral_source === 'Lainnya') {
+            $booking->referral_source = $request->referral_other;
+        } else {
+            $booking->referral_source = $request->referral_source;
         }
 
-        $serviceName = match ($type) {
-            'photobooth' => 'Glad Moments',
-            'audio' => 'Audio Guestbook',
-            'bundle' => 'Bundle PhotoBooth + Audio Guestbook',
-            'digital_invitation' => 'Digital Invitation',
-            default => 'Glad Moments',
-        };
+        $booking->promo_id = $request->promo_id;
+        $booking->payment_status = 'pending';
+        $booking->save();
 
-        return Package::whereHas('service', fn ($q) => $q->where('name', $serviceName))->value('id')
-            ?? Package::query()->value('id');
-    }
-
-    private function ensureScheduleDateIsAvailable(string $eventDate): void
-    {
-        if (Schedule::whereDate('date', $eventDate)
-            ->where(function ($query) {
-                $query->whereRaw('LOWER(status) = ?', ['booked'])
-                      ->orWhereRaw('LOWER(status) = ?', ['maintenance']);
-            })
-            ->exists()
-        ) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                'event_date' => 'Tanggal ' . date('d M Y', strtotime($eventDate)) . ' sudah terisi jadwal. Silakan pilih tanggal lain.',
-            ]);
-        }
-    }
-
-    private function resolvePrice(string $type, string $packageChoice): float
-    {
-        $package = Package::where('name', $packageChoice)->first();
-        if ($package) {
-            return $package->discounted_price ?? $package->price;
-        }
-
-        return match ($type) {
-            'photobooth' => config("booking-forms.photobooth_packages.{$packageChoice}", 1500000),
-            'audio' => config("booking-forms.audio_packages.{$packageChoice}", 2500000),
-            'bundle' => config("booking-forms.bundle_packages.{$packageChoice}", 5800000),
-            'digital_invitation' => config("booking-forms.digital_invitation_packages.{$packageChoice}", 2000000),
-            default => 1500000,
-        };
+        return redirect()->route('payment.checkout', ['booking' => $booking->id]);
     }
 }
